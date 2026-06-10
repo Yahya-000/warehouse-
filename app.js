@@ -71,34 +71,52 @@
         inputs.forEach(input => input.disabled = disable);
     }
 
-    // توليد ملف PDF بتنسيق موسط تماماً وبدون رقم طلب
-    function shareAsPDF() {
-        const element = document.getElementById('invoiceContainer');
-        
-        // تفعيل وضع مظهر الـ PDF الموسط المخصص
-        element.classList.add('pdf-mode');
+    // توليد ملف PDF بتنسيق موسط تماماً ومشاركته كملف مرفق فعلي
+function shareAsPDF() {
+  const element = document.getElementById("invoiceContainer");
 
-        const branchName = document.getElementById('branchLocation').value || 'عام';
-        const opt = {
-            margin:       15,
-            filename:     `طلبية_مستودع_${branchName}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
+  // تفعيل وضع مظهر الـ PDF الموسط المخصص
+  element.classList.add("pdf-mode");
 
-        // استخراج ملف الـ PDF
-        html2pdf().set(opt).from(element).save().then(() => {
-            element.classList.remove('pdf-mode'); // إعادة واجهة الموقع لحالتها الطبيعية
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'ملف طلبية المستودع الموسط PDF',
-                    text: `تم استخراج طلبية فرع (${branchName}) الموسطة بنجاح كملف PDF لجهازك.`,
-                }).catch(console.error);
-            }
-        });
-    }
+  const branchName = document.getElementById("branchLocation").value || "عام";
+  const fileName = `طلبية_مستودع_${branchName}.pdf`;
+
+  const opt = {
+    margin: 15,
+    filename: fileName,
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+  };
+
+  // توليد الـ PDF كـ Blob بدلاً من تحميله مباشرة للجهاز لتتمكن من مشاركته
+  html2pdf()
+    .set(opt)
+    .from(element)
+    .outputPdf("blob")
+    .then((pdfBlob) => {
+      // إعادة واجهة الموقع لحالتها الطبيعية بعد التقاط الصور للـ PDF
+      element.classList.remove("pdf-mode");
+
+      // تحويل الـ Blob إلى ملف رسمي جاهز للمشاركة والارسال
+      const pdfFile = new File([pdfBlob], fileName, { type: "application/pdf" });
+
+      // التحقق من أن الجهاز والمنصة تدعم مشاركة الملفات
+      if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+        navigator.share({
+          files: [pdfFile], // إرفاق ملف الـ PDF الفعلي هنا
+          title: "ملف طلبية للمستودع  PDF",
+          text: `مرفق لكم مستند الطلبية الرسمي لفرع (${branchName}).`
+        })
+        .then(() => console.log("تمت المشاركة بنجاح"))
+        .catch((error) => console.error("خطأ أثناء المشاركة:", error));
+      } else {
+        // حل بديل (Fallback) في حال كان المتصفح لا يدعم مشاركة الملفات (مثل بعض متصفحات الكمبيوتر)، يتم تحميله تلقائياً
+        alert("المشاركة المباشرة غير مدعومة على هذا المتصفح، سيتم تحميل الملف إلى جهازك الآن.");
+        html2pdf().set(opt).from(element).save();
+      }
+    });
+}
 
     // تصدير ملف الاكسل
     function exportToExcel() {
