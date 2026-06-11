@@ -168,7 +168,8 @@ function shareAsPDF() {
 
   // إنشاء عنصر مؤقت خارج نطاق الشاشة
   const tempDiv = document.createElement("div");
-  tempDiv.style.cssText = "position:fixed; left:-9999px; top:0; z-index:-1;";
+  tempDiv.style.cssText =
+    "position:absolute; left:-9999px; top:-9999px; visibility:hidden; pointer-events:none;";
   tempDiv.innerHTML = pdfHTML;
   document.body.appendChild(tempDiv);
 
@@ -200,19 +201,15 @@ function shareAsPDF() {
           })
           .catch((error) => console.error("خطأ أثناء المشاركة:", error));
       } else {
-        html2pdf()
-          .set(opt)
-          .from(tempDiv.firstElementChild)
-          .save()
-          .catch(() => {
-            // نسخة احتياطية إذا فشل الحفظ
-            const url = URL.createObjectURL(pdfBlob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = fileName;
-            a.click();
-            URL.revokeObjectURL(url);
-          });
+        // تحميل مباشر من الـ blob بدون إعادة توليد
+        const url = URL.createObjectURL(pdfBlob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
       }
     });
 }
