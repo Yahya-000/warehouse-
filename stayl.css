@@ -351,6 +351,18 @@ label {
     -webkit-text-fill-color: #000 !important; /* حل مخصص للآيفون لإجبار اللون الأسود الحاد */
 }
 
+/* منع قفل أو قص الجدول والأصناف عند التصدير في وضع PDF */
+.pdf-mode .table-responsive {
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+}
+
+.pdf-mode .products-table tr {
+    page-break-inside: avoid !important; /* يمنع كسر السطر الواحد نصفين */
+    break-inside: avoid !important;
+}
+
 Footer {
     text-align: center;
     padding: 15px;
