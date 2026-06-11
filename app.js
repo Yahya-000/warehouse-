@@ -79,6 +79,9 @@ function shareAsPDF() {
   const element = document.getElementById("invoiceContainer");
   element.classList.add("pdf-mode");
 
+  // إجبار المتصفح على إعادة الرسم
+  element.getBoundingClientRect();
+
   const branchName = document.getElementById("branchLocation").value || "عام";
   const fileName = `طلبية_مستودع_${branchName}.pdf`;
 
@@ -89,12 +92,12 @@ function shareAsPDF() {
     html2canvas: {
       scale: 2,
       useCORS: true,
-      windowWidth: 900, // ← هذا هو الحل الأساسي
+      windowWidth: 1200,
+      windowHeight: 1600,
     },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
   };
 
-  // تأخير بسيط لإعطاء المتصفح وقت يطبق الـ CSS
   setTimeout(() => {
     html2pdf()
       .set(opt)
@@ -118,7 +121,7 @@ function shareAsPDF() {
           html2pdf().set(opt).from(element).save();
         }
       });
-  }, 300); // ← 300 ملي ثانية كافية
+  }, 500);
 }
 
 // تصدير ملف الاكسل
