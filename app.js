@@ -102,6 +102,8 @@ function shareAsPDF() {
       if (navigator.share) {
         navigator
           .share({
+            files: [pdfFile],
+            filename: `طلبية_مستودع_${branchName}.pdf`,
             title: "ملف طلبية المستودع الموسط PDF",
             text: `تم استخراج طلبية فرع (${branchName}) الموسطة بنجاح كملف PDF لجهازك.`,
           })
