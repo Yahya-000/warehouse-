@@ -75,50 +75,51 @@ function toggleInputs(disable) {
   inputs.forEach((input) => (input.disabled = disable));
 }
 
-// توليد ملف PDF موسط بالكامل وإرساله كمستند مرفق حقيقي عبر الواتساب أو البريد
-    function shareAsPDF() {
-        const element = document.getElementById("invoiceContainer");
+function shareAsPDF() {
+  const element = document.getElementById("invoiceContainer");
+  element.classList.add("pdf-mode");
 
-        // تفعيل وضع مظهر الـ PDF الموسط المخصص
-        element.classList.add("pdf-mode");
+  const branchName = document.getElementById("branchLocation").value || "عام";
+  const fileName = `طلبية_مستودع_${branchName}.pdf`;
 
-        const branchName = document.getElementById("branchLocation").value || "عام";
-        const fileName = `طلبية_مستودع_${branchName}.pdf`;
+  const opt = {
+    margin: 15,
+    filename: fileName,
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      windowWidth: 900, // ← هذا هو الحل الأساسي
+    },
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+  };
 
-        const opt = {
-            margin:       15,
-            filename:     fileName,
-            image:        { type: "jpeg", quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: "mm", format: "a4", orientation: "portrait" },
-        };
-
-        // تشغيل التحويل والحصول على الـ Blob للمشاركة المباشرة للملف الفعلي
-        html2pdf()
-            .set(opt)
-            .from(element)
-            .outputPdf("blob")
-            .then((pdfBlob) => {
-                element.classList.remove("pdf-mode"); // إعادة مظهر واجهة الموقع المتجاوبة
-
-                // تحويل بيانات الـ Blob لملف حقيقي جاهز للإرسال والمشاركة الفورية
-                const pdfFile = new File([pdfBlob], fileName, { type: "application/pdf" });
-
-                // التحقق من صلاحية مشاركة الملفات على بيئة الهاتف الحالية
-                if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-                    navigator.share({
-                        files: [pdfFile], 
-                        title: "ملف طلبية المستودع الموسط PDF",
-                        text: `مرفق لكم مستند الطلبية الرسمي لفرع (${branchName}).`
-                    })
-                    .catch((error) => console.error("خطأ أثناء الارسال أو المشاركة:", error));
-                } else {
-                    // حل بديل فوري للمتصفحات التي لا تدعم مشاركة الملفات مباشرة كأجهزة الكمبيوتر
-                    alert("المشاركة المباشرة للملفات غير مدعومة بالمتصفح الحالي، سيتم تحميل مستند الـ PDF الموسط على جهازك مباشرة.");
-                    html2pdf().set(opt).from(element).save();
-                }
-            });
-    }
+  // تأخير بسيط لإعطاء المتصفح وقت يطبق الـ CSS
+  setTimeout(() => {
+    html2pdf()
+      .set(opt)
+      .from(element)
+      .outputPdf("blob")
+      .then((pdfBlob) => {
+        element.classList.remove("pdf-mode");
+        const pdfFile = new File([pdfBlob], fileName, {
+          type: "application/pdf",
+        });
+        if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+          navigator
+            .share({
+              files: [pdfFile],
+              title: "ملف طلبية المستودع",
+              text: `مرفق لكم مستند الطلبية الرسمي لفرع (${branchName}).`,
+            })
+            .catch((error) => console.error("خطأ:", error));
+        } else {
+          alert("سيتم تحميل الملف مباشرة.");
+          html2pdf().set(opt).from(element).save();
+        }
+      });
+  }, 300); // ← 300 ملي ثانية كافية
+}
 
 // تصدير ملف الاكسل
 function exportToExcel() {
