@@ -76,7 +76,7 @@ function toggleInputs(disable) {
 }
 
 // ========================================================
-// توليد PDF من عنصر مستقل بدون لمس الصفحة الحالية
+// توليد PDF من عنصر مستقل بنفس تنسيق الكمبيوتر تماماً على الجوال
 // ========================================================
 function shareAsPDF() {
   const branchName = document.getElementById("branchLocation").value || "عام";
@@ -94,31 +94,30 @@ function shareAsPDF() {
     const qty = row.querySelector(".prod-qty").value;
     rowsHTML += `
       <tr style="background:${index % 2 === 0 ? "#ffffff" : "#f8f9fa"};">
-        <td style="padding:9px 6px; border:1px solid #ddd; text-align:center; font-weight:bold;">${index + 1}</td>
-        <td style="padding:9px 6px; border:1px solid #ddd; text-align:center;">${comp}</td>
-        <td style="padding:9px 6px; border:1px solid #ddd; text-align:center;">${prod}</td>
-        <td style="padding:9px 6px; border:1px solid #ddd; text-align:center;">${size}</td>
-        <td style="padding:9px 6px; border:1px solid #ddd; text-align:center; font-weight:bold;">${qty}</td>
+        <td style="padding:10px 6px; border:1px solid #ddd; text-align:center; font-weight:bold; font-size:13px;">${index + 1}</td>
+        <td style="padding:10px 6px; border:1px solid #ddd; text-align:center; font-size:13px; word-break:break-word;">${comp}</td>
+        <td style="padding:10px 6px; border:1px solid #ddd; text-align:center; font-size:13px; word-break:break-word;">${prod}</td>
+        <td style="padding:10px 6px; border:1px solid #ddd; text-align:center; font-size:13px; word-break:break-word;">${size}</td>
+        <td style="padding:10px 6px; border:1px solid #ddd; text-align:center; font-weight:bold; font-size:13px;">${qty}</td>
       </tr>`;
   });
 
-  // HTML نظيف ومستقل للـ PDF — لا يتأثر بأي CSS أو media query للصفحة
+  // الـ HTML الموسط والنظيف للـ PDF (ثابت العرض 750px ليناسب مقاس الـ A4 تماماً)
   const pdfHTML = `
   <div style="
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     direction: rtl;
-    padding: 30px;
+    padding: 40px 30px;
     color: #1a1a1a;
-    width: 720px;
+    width: 750px;
+    box-sizing: border-box;
     background: #fff;
   ">
-    <!-- الترويسة الرسمية -->
     <div style="text-align:center; border-bottom:3px double #2c3e50; padding-bottom:18px; margin-bottom:22px;">
-      <h1 style="font-size:20px; color:#2c3e50; margin:0 0 6px 0;">مستند طلب توريد بضائع من مستودع الفصوص</h1>
-      <p style="font-size:12px; color:#666; margin:0;">وثيقة صادرة إلكترونياً من نظام تسجيل طلبات للفروع الداخلية</p>
+      <h1 style="font-size:22px; color:#2c3e50; margin:0 0 8px 0; font-weight:bold;">مستند طلب توريد بضائع من مستودع الفصوص</h1>
+      <p style="font-size:13px; color:#666; margin:0;">وثيقة صادرة إلكترونياً من نظام تسجيل طلبات للفروع الداخلية</p>
     </div>
 
-    <!-- شريط الوقت -->
     <div style="
       background:#ecf0f1;
       padding:12px 16px;
@@ -126,38 +125,35 @@ function shareAsPDF() {
       text-align:center;
       font-weight:bold;
       color:#2c3e50;
-      margin-bottom:22px;
+      margin-bottom:25px;
       border-right:5px solid #2c3e50;
       border-left:5px solid #2c3e50;
-      font-size:13px;
+      font-size:14px;
     ">${timeText}</div>
 
-    <!-- الفرع والموظف -->
-    <div style="display:flex; justify-content:space-around; margin-bottom:25px; gap:20px;">
-      <div style="text-align:center; flex:1; background:#f8f9fa; padding:12px; border-radius:6px;">
+    <div style="display:table; width:100%; margin-bottom:25px; border-collapse:separate; border-spacing:15px 0;">
+      <div style="display:table-cell; width:50%; text-align:center; background:#f8f9fa; padding:15px; border-radius:6px; border:1px solid #eaeaea;">
         <div style="font-weight:bold; color:#2c3e50; margin-bottom:6px; font-size:13px;">📍 موقع الفرع</div>
         <div style="font-size:16px; font-weight:bold; color:#000;">${branchName}</div>
       </div>
-      <div style="text-align:center; flex:1; background:#f8f9fa; padding:12px; border-radius:6px;">
+      <div style="display:table-cell; width:50%; text-align:center; background:#f8f9fa; padding:15px; border-radius:6px; border:1px solid #eaeaea;">
         <div style="font-weight:bold; color:#2c3e50; margin-bottom:6px; font-size:13px;">👤 اسم الموظف</div>
         <div style="font-size:16px; font-weight:bold; color:#000;">${employeeName}</div>
       </div>
     </div>
 
-    <!-- عنوان الجدول -->
-    <div style="font-size:15px; font-weight:bold; color:#2c3e50; margin-bottom:12px; padding-bottom:8px; border-bottom:2px solid #ecf0f1;">
+    <div style="font-size:16px; font-weight:bold; color:#2c3e50; margin-bottom:15px; padding-bottom:8px; border-bottom:2px solid #ecf0f1;">
       📦 تفاصيل الأصناف
     </div>
 
-    <!-- الجدول -->
-    <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
+    <table style="width:100%; border-collapse:collapse; table-layout:fixed; box-sizing:border-box;">
       <thead>
         <tr style="background:#2c3e50; color:#fff;">
-          <th style="padding:10px 6px; border:1px solid #ddd; text-align:center; width:45px; font-size:13px;">الرقم</th>
-          <th style="padding:10px 6px; border:1px solid #ddd; text-align:center; width:25%; font-size:13px;">اسم الشركة</th>
-          <th style="padding:10px 6px; border:1px solid #ddd; text-align:center; width:30%; font-size:13px;">المنتج / الون</th>
-          <th style="padding:10px 6px; border:1px solid #ddd; text-align:center; width:15%; font-size:13px;">المقاس</th>
-          <th style="padding:10px 6px; border:1px solid #ddd; text-align:center; width:15%; font-size:13px;">العدد</th>
+          <th style="padding:12px 6px; border:1px solid #ddd; text-align:center; width:50px; font-size:13px; font-weight:bold;">الرقم</th>
+          <th style="padding:12px 6px; border:1px solid #ddd; text-align:center; width:200px; font-size:13px; font-weight:bold;">اسم الشركة</th>
+          <th style="padding:12px 6px; border:1px solid #ddd; text-align:center; width:260px; font-size:13px; font-weight:bold;">المنتج / الون</th>
+          <th style="padding:12px 6px; border:1px solid #ddd; text-align:center; width:120px; font-size:13px; font-weight:bold;">المقاس</th>
+          <th style="padding:12px 6px; border:1px solid #ddd; text-align:center; width:120px; font-size:13px; font-weight:bold;">العدد</th>
         </tr>
       </thead>
       <tbody>
@@ -166,50 +162,59 @@ function shareAsPDF() {
     </table>
   </div>`;
 
-  // إنشاء عنصر مؤقت خارج نطاق الشاشة
+  // إنشاء العنصر المؤقت وإبقائه مرئياً للمحرك مع نقله بعيداً عن عين المستخدم فقط لضمان حساب أبعاده الكاملة
   const tempDiv = document.createElement("div");
-  tempDiv.style.cssText =
-    "position:absolute; left:-9999px; top:-9999px; visibility:hidden; pointer-events:none;";
+  tempDiv.style.cssText = "position:absolute; top:0; left:-2000px; width:750px; z-index:-9999; overflow:hidden;";
   tempDiv.innerHTML = pdfHTML;
   document.body.appendChild(tempDiv);
 
+  // الخدعة البرمجية: إجبار الجوال على محاكاة شاشة عرض كمبيوتر واسعة أثناء الالتقاط
   const opt = {
     margin: 10,
     filename: fileName,
     image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, logging: false },
+    html2canvas: { 
+      scale: 2, 
+      useCORS: true, 
+      logging: false,
+      width: 750,        // قفل العرض على نفس حجم الـ div الرئيسي لضمان عدم الانكماش
+      windowWidth: 750   // جعل المتصفح يلتقط الصورة وكأنه كمبيوتر بعرض 750px تماماً
+    },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
   };
 
   html2pdf()
     .set(opt)
-    .from(tempDiv.firstElementChild)
+    .from(tempDiv)
     .outputPdf("blob")
     .then((pdfBlob) => {
-      document.body.removeChild(tempDiv);
+      document.body.removeChild(tempDiv); // حذف العنصر المؤقت بعد الانتهاء فوراً
 
       const pdfFile = new File([pdfBlob], fileName, {
         type: "application/pdf",
       });
 
+      // 1️⃣ التنزيل والمشاركة التلقائية معاً في نفس الوقت
+      const url = URL.createObjectURL(pdfBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      // 2️⃣ إطلاق نافذة المشاركة الحقيقية للملف الفعلي على الجوال
       if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-        navigator
-          .share({
+        setTimeout(() => {
+          navigator.share({
             files: [pdfFile],
             title: "ملف طلبية المستودع",
             text: `مرفق لكم مستند الطلبية الرسمي لفرع (${branchName}).`,
-          })
-          .catch((error) => console.error("خطأ أثناء المشاركة:", error));
+          }).catch((error) => console.error("خطأ أثناء المشاركة:", error));
+        }, 500); // تأخير بسيط جداً لعدم تداخل التنزيل مع نافذة المشاركة
       } else {
-        // تحميل مباشر من الـ blob بدون إعادة توليد
-        const url = URL.createObjectURL(pdfBlob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        // إذا كان المتصفح لا يدعم المشاركة المباشرة نفتح الرابط في صفحة جديدة كخيار احتياطي موسط ونظيف
+        window.open(url, '_blank');
       }
     });
 }
