@@ -75,68 +75,50 @@ function toggleInputs(disable) {
   inputs.forEach((input) => (input.disabled = disable));
 }
 
-// توليد ملف PDF: يقوم بالتنزيل على الجهاز والمشاركة كملف مرفق في نفس الوقت
-function shareAsPDF() {
-  const element = document.getElementById("invoiceContainer");
+// توليد ملف PDF موسط بالكامل وإرساله كمستند مرفق حقيقي عبر الواتساب أو البريد
+    function shareAsPDF() {
+        const element = document.getElementById("invoiceContainer");
 
-  // تفعيل وضع مظهر الـ PDF الموسط المخصص لإخفاء عناصر الموقع
-  element.classList.add("pdf-mode");
+        // تفعيل وضع مظهر الـ PDF الموسط المخصص
+        element.classList.add("pdf-mode");
 
-  const branchName = document.getElementById("branchLocation").value || "عام";
-  const fileName = `طلبية_مستودع_${branchName}.pdf`;
+        const branchName = document.getElementById("branchLocation").value || "عام";
+        const fileName = `طلبية_مستودع_${branchName}.pdf`;
 
-  const opt = {
-    margin: 15,
-    filename: fileName,
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, logging: false },
-    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    pagebreak: { mode: ["avoid-all", "css", "legacy"] },
-  };
+        const opt = {
+            margin:       15,
+            filename:     fileName,
+            image:        { type: "jpeg", quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: "mm", format: "a4", orientation: "portrait" },
+        };
 
-  // إضافة تأخير بسيط (250ms) لضمان استقرار التصميم الموسط بالكامل على الجوال قبل التصوير
-  setTimeout(() => {
-    html2pdf()
-      .set(opt)
-      .from(element)
-      .outputPdf("blob")
-      .then((pdfBlob) => {
-        // إعادة واجهة الموقع لحالتها الطبيعية فوراً بعد التقاط الـ PDF
-        element.classList.remove("pdf-mode");
+        // تشغيل التحويل والحصول على الـ Blob للمشاركة المباشرة للملف الفعلي
+        html2pdf()
+            .set(opt)
+            .from(element)
+            .outputPdf("blob")
+            .then((pdfBlob) => {
+                element.classList.remove("pdf-mode"); // إعادة مظهر واجهة الموقع المتجاوبة
 
-        // 1️⃣ عملية التنزيل التلقائي للملف على جهاز المستخدم
-        const downloadLink = document.createElement("a");
-        downloadLink.href = URL.createObjectURL(pdfBlob);
-        downloadLink.download = fileName;
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
+                // تحويل بيانات الـ Blob لملف حقيقي جاهز للإرسال والمشاركة الفورية
+                const pdfFile = new File([pdfBlob], fileName, { type: "application/pdf" });
 
-        // 2️⃣ تحويل الـ Blob إلى ملف رسمي لفتح نافذة المشاركة الفورية
-        const pdfFile = new File([pdfBlob], fileName, {
-          type: "application/pdf",
-        });
-
-        // التحقق من دعم المتصفح لمشاركة الملفات (الجوالات والأجهزة الحديثة)
-        if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-          setTimeout(() => {
-            navigator
-              .share({
-                files: [pdfFile],
-                title: "ملف طلبية المستودع الموسط PDF",
-                text: `مرفق لكم مستند الطلبية الرسمي لفرع (${branchName}).`,
-              })
-              .then(() => console.log("تم التنزيل والمشاركة بنجاح"))
-              .catch((error) => console.error("خطأ أثناء المشاركة:", error));
-          }, 400);
-        } else {
-          console.log(
-            "تم تنزيل الملف، لكن المتصفح الحالي لا يدعم المشاركة المباشرة.",
-          );
-        }
-      });
-  }, 250);
-}
+                // التحقق من صلاحية مشاركة الملفات على بيئة الهاتف الحالية
+                if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                    navigator.share({
+                        files: [pdfFile], 
+                        title: "ملف طلبية المستودع الموسط PDF",
+                        text: `مرفق لكم مستند الطلبية الرسمي لفرع (${branchName}).`
+                    })
+                    .catch((error) => console.error("خطأ أثناء الارسال أو المشاركة:", error));
+                } else {
+                    // حل بديل فوري للمتصفحات التي لا تدعم مشاركة الملفات مباشرة كأجهزة الكمبيوتر
+                    alert("المشاركة المباشرة للملفات غير مدعومة بالمتصفح الحالي، سيتم تحميل مستند الـ PDF الموسط على جهازك مباشرة.");
+                    html2pdf().set(opt).from(element).save();
+                }
+            });
+    }
 
 // تصدير ملف الاكسل
 function exportToExcel() {
