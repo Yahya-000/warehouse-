@@ -75,15 +75,7 @@
 function shareAsPDF() {
   const element = document.getElementById("invoiceContainer");
 
-  const opt = {
-    margin: 15,
-    filename: fileName,
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    // 🔥 السطر الجديد لحل مشكلة اختفاء وقص الأصناف الأخيرة:
-    pagebreak: { mode: ["avoid-all", "css", "legacy"] },
-  };
+  
 
   // تفعيل وضع مظهر الـ PDF الموسط المخصص لإخفاء عناصر الموقع
   element.classList.add("pdf-mode");
@@ -97,6 +89,8 @@ function shareAsPDF() {
     image: { type: "jpeg", quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    // 🔥 السطر الجديد لحل مشكلة اختفاء وقص الأصناف الأخيرة:
+    pagebreak: { mode: ["avoid-all", "css", "legacy"] },
   };
 
   // توليد الـ PDF كـ Blob للتحكم الكامل به (تنزيل + مشاركة)
