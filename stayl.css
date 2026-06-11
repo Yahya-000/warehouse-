@@ -18,6 +18,7 @@
 
 body {
     background-color: var(--bg);
+    
     color: #333;
     padding: 10px; /* هوامش صغيرة مريحة لشاشات الهواتف */
 }
@@ -105,7 +106,17 @@ h2, h3 {
     display: flex;
     flex-direction: column;
     text-align: center; /* توسيط العناوين الافتراضية */
+    padding: 8px;
 }
+.form-group input, .form-group select {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
 
 label {
     margin-bottom: 6px;
@@ -129,10 +140,26 @@ label {
     gap: 5px;
 }
 
-.btn-add { background-color: var(--accent); color: white; width: 100%; }
-.btn-submit { background-color: var(--success); color: white; width: 100%; margin-top: 15px; }
-.btn-danger { background-color: var(--danger); color: white; padding: 6px 12px; font-size: 13px; }
-.btn-edit { background-color: #f39c12; color: white; }
+.btn-add { 
+    background-color: var(--accent);
+     color: white;
+      width: 100%; 
+    }
+.btn-submit { 
+    background-color: var(--success); 
+    color: white; width: 100%;
+     margin-top: 15px;
+     }
+.btn-danger { 
+    background-color: var(--danger); 
+    color: white; 
+    padding: 6px 12px; 
+    font-size: 13px; 
+}
+.btn-edit { 
+    background-color: #f39c12;
+     color: white; 
+    }
 
 /* حاوية أزرار تصدير ومشاركة الملفات */
 .actions-section {
@@ -309,3 +336,10 @@ label {
 
 /* تحويل المدخلات إلى نصوص عادية سوداء وموسطة داخل الأوراق الرسمية */
 .pdf-mode input, .pdf-mode select { border: none !important; background: transparent !important; appearance: none !important; -webkit-appearance: none !important; color: #000 !important; font-weight: bold !important; text-align: center !important; font-size: 14px !important; }
+
+Footer {
+    text-align: center;
+    padding: 15px;
+    font-size: 13px;
+    color: #777;
+}

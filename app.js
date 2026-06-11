@@ -71,11 +71,11 @@
         inputs.forEach(input => input.disabled = disable);
     }
 
-    // توليد ملف PDF بتنسيق موسط تماماً ومشاركته كملف مرفق فعلي
+   // توليد ملف PDF: يقوم بالتنزيل على الجهاز والمشاركة كملف مرفق في نفس الوقت
 function shareAsPDF() {
   const element = document.getElementById("invoiceContainer");
 
-  // تفعيل وضع مظهر الـ PDF الموسط المخصص
+  // تفعيل وضع مظهر الـ PDF الموسط المخصص لإخفاء عناصر الموقع
   element.classList.add("pdf-mode");
 
   const branchName = document.getElementById("branchLocation").value || "عام";
@@ -89,31 +89,40 @@ function shareAsPDF() {
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
   };
 
-  // توليد الـ PDF كـ Blob بدلاً من تحميله مباشرة للجهاز لتتمكن من مشاركته
+  // توليد الـ PDF كـ Blob للتحكم الكامل به (تنزيل + مشاركة)
   html2pdf()
     .set(opt)
     .from(element)
     .outputPdf("blob")
     .then((pdfBlob) => {
-      // إعادة واجهة الموقع لحالتها الطبيعية بعد التقاط الصور للـ PDF
+      // إعادة واجهة الموقع لحالتها الطبيعية فوراً بعد التقاط الـ PDF
       element.classList.remove("pdf-mode");
 
-      // تحويل الـ Blob إلى ملف رسمي جاهز للمشاركة والارسال
+      // 1️⃣ أولاً: عملية التنزيل التلقائي للملف على جهاز المستخدم
+      const downloadLink = document.createElement("a");
+      downloadLink.href = URL.createObjectURL(pdfBlob);
+      downloadLink.download = fileName;
+      document.body.appendChild(downloadLink);
+      downloadLink.click(); // محاكاة الضغط للتنزيل
+      document.body.removeChild(downloadLink); // تنظيف الصفحة
+
+      // 2️⃣ ثانياً: تحويل الـ Blob إلى ملف رسمي لفتح نافذة المشاركة الفورية
       const pdfFile = new File([pdfBlob], fileName, { type: "application/pdf" });
 
-      // التحقق من أن الجهاز والمنصة تدعم مشاركة الملفات
+      // التحقق من دعم المتصفح لمشاركة الملفات (الجوالات والأجهزة الحديثة)
       if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-        navigator.share({
-          files: [pdfFile], // إرفاق ملف الـ PDF الفعلي هنا
-          title: "ملف طلبية للمستودع  PDF",
-          text: `مرفق لكم مستند الطلبية الرسمي لفرع (${branchName}).`
-        })
-        .then(() => console.log("تمت المشاركة بنجاح"))
-        .catch((error) => console.error("خطأ أثناء المشاركة:", error));
+        // تأخير بسيط جداً (نصف ثانية) لضمان بدء التنزيل أولاً ثم ظهور نافذة المشاركة
+        setTimeout(() => {
+          navigator.share({
+            files: [pdfFile], // إرفاق ملف الـ PDF الفعلي
+            title: "ملف طلبية المستودع الموسط PDF",
+            text: `مرفق لكم مستند الطلبية الرسمي لفرع (${branchName}).`
+          })
+          .then(() => console.log("تم التنزيل والمشاركة بنجاح"))
+          .catch((error) => console.error("خطأ أثناء المشاركة:", error));
+        }, 500);
       } else {
-        // حل بديل (Fallback) في حال كان المتصفح لا يدعم مشاركة الملفات (مثل بعض متصفحات الكمبيوتر)، يتم تحميله تلقائياً
-        alert("المشاركة المباشرة غير مدعومة على هذا المتصفح، سيتم تحميل الملف إلى جهازك الآن.");
-        html2pdf().set(opt).from(element).save();
+        console.log("تم تنزيل الملف، لكن المتصفح الحالي لا يدعم المشاركة المباشرة.");
       }
     });
 }
