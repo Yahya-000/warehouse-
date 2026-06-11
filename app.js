@@ -51,7 +51,7 @@ document.getElementById("orderForm").addEventListener("submit", function (e) {
 
   document.getElementById("orderTimestamp").innerHTML =
     `⏰ <b>وقت إنشاء الطلب:</b> ${timeString}`;
-  document.getElementById("metaHeader").style.display = "flex"; // إظهار شريط الوقت الموسط
+  document.getElementById("metaHeader").style.display = "flex";
 
   toggleInputs(true);
 
@@ -75,53 +75,146 @@ function toggleInputs(disable) {
   inputs.forEach((input) => (input.disabled = disable));
 }
 
+// ========================================================
+// توليد PDF من عنصر مستقل بدون لمس الصفحة الحالية
+// ========================================================
 function shareAsPDF() {
-  const element = document.getElementById("invoiceContainer");
-  element.classList.add("pdf-mode");
-
-  // إجبار المتصفح على إعادة الرسم
-  element.getBoundingClientRect();
-
   const branchName = document.getElementById("branchLocation").value || "عام";
+  const employeeName = document.getElementById("employeeName").value || "";
+  const timeText = document.getElementById("orderTimestamp").innerHTML;
   const fileName = `طلبية_مستودع_${branchName}.pdf`;
 
+  // بناء صفوف الجدول من البيانات المدخلة
+  let rowsHTML = "";
+  const rows = document.querySelectorAll("#tableBody tr");
+  rows.forEach((row, index) => {
+    const comp = row.querySelector(".comp-name").value;
+    const prod = row.querySelector(".prod-name").value;
+    const size = row.querySelector(".prod-size").value;
+    const qty = row.querySelector(".prod-qty").value;
+    rowsHTML += `
+      <tr style="background:${index % 2 === 0 ? "#ffffff" : "#f8f9fa"};">
+        <td style="padding:9px 6px; border:1px solid #ddd; text-align:center; font-weight:bold;">${index + 1}</td>
+        <td style="padding:9px 6px; border:1px solid #ddd; text-align:center;">${comp}</td>
+        <td style="padding:9px 6px; border:1px solid #ddd; text-align:center;">${prod}</td>
+        <td style="padding:9px 6px; border:1px solid #ddd; text-align:center;">${size}</td>
+        <td style="padding:9px 6px; border:1px solid #ddd; text-align:center; font-weight:bold;">${qty}</td>
+      </tr>`;
+  });
+
+  // HTML نظيف ومستقل للـ PDF — لا يتأثر بأي CSS أو media query للصفحة
+  const pdfHTML = `
+  <div style="
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    direction: rtl;
+    padding: 30px;
+    color: #1a1a1a;
+    width: 720px;
+    background: #fff;
+  ">
+    <!-- الترويسة الرسمية -->
+    <div style="text-align:center; border-bottom:3px double #2c3e50; padding-bottom:18px; margin-bottom:22px;">
+      <h1 style="font-size:20px; color:#2c3e50; margin:0 0 6px 0;">مستند طلب توريد بضائع من مستودع الفصوص</h1>
+      <p style="font-size:12px; color:#666; margin:0;">وثيقة صادرة إلكترونياً من نظام تسجيل طلبات للفروع الداخلية</p>
+    </div>
+
+    <!-- شريط الوقت -->
+    <div style="
+      background:#ecf0f1;
+      padding:12px 16px;
+      border-radius:6px;
+      text-align:center;
+      font-weight:bold;
+      color:#2c3e50;
+      margin-bottom:22px;
+      border-right:5px solid #2c3e50;
+      border-left:5px solid #2c3e50;
+      font-size:13px;
+    ">${timeText}</div>
+
+    <!-- الفرع والموظف -->
+    <div style="display:flex; justify-content:space-around; margin-bottom:25px; gap:20px;">
+      <div style="text-align:center; flex:1; background:#f8f9fa; padding:12px; border-radius:6px;">
+        <div style="font-weight:bold; color:#2c3e50; margin-bottom:6px; font-size:13px;">📍 موقع الفرع</div>
+        <div style="font-size:16px; font-weight:bold; color:#000;">${branchName}</div>
+      </div>
+      <div style="text-align:center; flex:1; background:#f8f9fa; padding:12px; border-radius:6px;">
+        <div style="font-weight:bold; color:#2c3e50; margin-bottom:6px; font-size:13px;">👤 اسم الموظف</div>
+        <div style="font-size:16px; font-weight:bold; color:#000;">${employeeName}</div>
+      </div>
+    </div>
+
+    <!-- عنوان الجدول -->
+    <div style="font-size:15px; font-weight:bold; color:#2c3e50; margin-bottom:12px; padding-bottom:8px; border-bottom:2px solid #ecf0f1;">
+      📦 تفاصيل الأصناف
+    </div>
+
+    <!-- الجدول -->
+    <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
+      <thead>
+        <tr style="background:#2c3e50; color:#fff;">
+          <th style="padding:10px 6px; border:1px solid #ddd; text-align:center; width:45px; font-size:13px;">الرقم</th>
+          <th style="padding:10px 6px; border:1px solid #ddd; text-align:center; width:25%; font-size:13px;">اسم الشركة</th>
+          <th style="padding:10px 6px; border:1px solid #ddd; text-align:center; width:30%; font-size:13px;">المنتج / الون</th>
+          <th style="padding:10px 6px; border:1px solid #ddd; text-align:center; width:15%; font-size:13px;">المقاس</th>
+          <th style="padding:10px 6px; border:1px solid #ddd; text-align:center; width:15%; font-size:13px;">العدد</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rowsHTML}
+      </tbody>
+    </table>
+  </div>`;
+
+  // إنشاء عنصر مؤقت خارج نطاق الشاشة
+  const tempDiv = document.createElement("div");
+  tempDiv.style.cssText = "position:fixed; left:-9999px; top:0; z-index:-1;";
+  tempDiv.innerHTML = pdfHTML;
+  document.body.appendChild(tempDiv);
+
   const opt = {
-    margin: 15,
+    margin: 10,
     filename: fileName,
     image: { type: "jpeg", quality: 0.98 },
-    html2canvas: {
-      scale: 2,
-      useCORS: true,
-      windowWidth: 1200,
-      windowHeight: 1600,
-    },
+    html2canvas: { scale: 2, useCORS: true, logging: false },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
   };
 
-  setTimeout(() => {
-    html2pdf()
-      .set(opt)
-      .from(element)
-      .outputPdf("blob")
-      .then((pdfBlob) => {
-        element.classList.remove("pdf-mode");
-        const pdfFile = new File([pdfBlob], fileName, {
-          type: "application/pdf",
-        });
-        if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-          navigator
-            .share({
-              files: [pdfFile],
-              title: "ملف طلبية المستودع",
-              text: `مرفق لكم مستند الطلبية الرسمي لفرع (${branchName}).`,
-            })
-            .catch((error) => console.error("خطأ:", error));
-        } else {
-          alert("سيتم تحميل الملف مباشرة.");
-          html2pdf().set(opt).from(element).save();
-        }
+  html2pdf()
+    .set(opt)
+    .from(tempDiv.firstElementChild)
+    .outputPdf("blob")
+    .then((pdfBlob) => {
+      document.body.removeChild(tempDiv);
+
+      const pdfFile = new File([pdfBlob], fileName, {
+        type: "application/pdf",
       });
-  }, 500);
+
+      if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+        navigator
+          .share({
+            files: [pdfFile],
+            title: "ملف طلبية المستودع",
+            text: `مرفق لكم مستند الطلبية الرسمي لفرع (${branchName}).`,
+          })
+          .catch((error) => console.error("خطأ أثناء المشاركة:", error));
+      } else {
+        html2pdf()
+          .set(opt)
+          .from(tempDiv.firstElementChild)
+          .save()
+          .catch(() => {
+            // نسخة احتياطية إذا فشل الحفظ
+            const url = URL.createObjectURL(pdfBlob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            URL.revokeObjectURL(url);
+          });
+      }
+    });
 }
 
 // تصدير ملف الاكسل

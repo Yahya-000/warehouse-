@@ -10,7 +10,7 @@
 }
 
 *, *::before, *::after {
-    box-sizing: border-box; /* يمنع خروج المدخلات نهائياً عن الشاشة */
+    box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
@@ -19,14 +19,14 @@
 body {
     background-color: var(--bg);
     color: #333;
-    padding: 10px; /* هوامش صغيرة مريحة لشاشات الهواتف */
+    padding: 10px;
 }
 
 .container {
     max-width: 900px;
     margin: 0 auto;
     background: white;
-    padding: 15px; /* حواف داخلية مرنة تتكيف تلقائياً */
+    padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     position: relative;
@@ -40,9 +40,9 @@ h2, h3 {
     font-size: 1.3rem;
 }
 
-/* ترويسة الـ PDF الرسمية (مخفية داخل الموقع الافتراضي) */
+/* ترويسة الـ PDF الرسمية — مخفية في الموقع */
 .pdf-official-header {
-    display: none; 
+    display: none;
     text-align: center;
     border-bottom: 3px double var(--primary);
     padding-bottom: 15px;
@@ -58,7 +58,7 @@ h2, h3 {
     color: #555;
 }
 
-/* شريط التوقيت (موسط وتلقائي التجاوب) */
+/* شريط التوقيت */
 .meta-header {
     display: none;
     flex-direction: column;
@@ -77,7 +77,7 @@ h2, h3 {
     text-align: center;
 }
 
-/* صندوق إحصائيات الموقع (يختفي في الـ PDF) */
+/* شريط الإحصائيات */
 .stats-bar {
     background-color: #e8f4f8;
     border-right: 5px solid var(--accent);
@@ -93,10 +93,10 @@ h2, h3 {
     font-size: 14px;
 }
 
-/* حقول المدخلات الأساسية (الفرع والموظف) */
+/* حقول المعلومات الأساسية */
 .main-info {
     display: grid;
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
     gap: 15px;
     margin-bottom: 25px;
 }
@@ -104,7 +104,7 @@ h2, h3 {
 .form-group {
     display: flex;
     flex-direction: column;
-    text-align: center; /* توسيط العناوين الافتراضية */
+    text-align: center;
     padding: 8px;
 }
 .form-group input, .form-group select {
@@ -123,7 +123,7 @@ label {
     font-size: 14px;
 }
 
-/* تنسيق أزرار التحكم بالموقع لجعلها مناسبة للمس */
+/* أزرار التحكم */
 .btn {
     padding: 12px 20px;
     border: none;
@@ -138,12 +138,12 @@ label {
     gap: 5px;
 }
 
-.btn-add { background-color: var(--accent); color: white; width: 100%; }
-.btn-submit { background-color: var(--success); color: white; width: 100%; margin-top: 15px; }
-.btn-danger { background-color: var(--danger); color: white; padding: 6px 12px; font-size: 13px; }
-.btn-edit { background-color: #f39c12; color: white; }
+.btn-add    { background-color: var(--accent);   color: white; width: 100%; }
+.btn-submit { background-color: var(--success);  color: white; width: 100%; margin-top: 15px; }
+.btn-danger { background-color: var(--danger);   color: white; padding: 6px 12px; font-size: 13px; }
+.btn-edit   { background-color: #f39c12; color: white; }
 
-/* حاوية أزرار تصدير ومشاركة الملفات */
+/* أزرار التصدير */
 .actions-section {
     margin-top: 25px;
     display: none;
@@ -166,10 +166,10 @@ label {
     justify-content: center;
     gap: 8px;
 }
-.bg-pdf { background-color: #e74c3c; }
+.bg-pdf   { background-color: #e74c3c; }
 .bg-excel { background-color: #1f7246; }
 
-/* الحاوية الافتراضية للجدول */
+/* الجدول */
 .table-responsive {
     width: 100%;
     margin-bottom: 20px;
@@ -181,15 +181,13 @@ label {
 }
 
 /* ==========================================================================
-   📱 2. كود التناسق الذكي للجدول والمدخلات على شاشات الجوال (Responsive Cards)
+   📱 2. تنسيق الجوال — بطاقات
    ========================================================================== */
 @media (max-width: 600px) {
-    /* إخفاء ترويسة الجدول التقليدية لأنها تسبب تداخل الحروف على الشاشات الضيقة */
     .products-table thead {
         display: none;
     }
 
-    /* تحويل كل سطر (tr) إلى بطاقة منفصلة مريحة ومتناسقة مع العين */
     .products-table tr {
         display: block;
         background: #fafbfc;
@@ -200,17 +198,15 @@ label {
         box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
 
-    /* تحويل الخلايا داخل السطر لتصبح موزعة عمودياً بالتساوي */
     .products-table td {
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 8px 0;
         border: none !important;
-        width: 100% !important; /* إجبار العناصر على ملء العرض */
+        width: 100% !important;
     }
 
-    /* تمييز خانة الترقيم التسلسلي (م) في أعلى البطاقة */
     .products-table td.row-number {
         background: var(--primary);
         color: white;
@@ -221,15 +217,13 @@ label {
         margin-bottom: 8px;
     }
 
-    /* إضافة عنوان جانبي ذكي لكل خانة لمعرفة المطلوب إدخاله بوضوح وتناسق */
-    .products-table td:nth-child(2)::before { content: "🏢 اسم الشركة:"; font-weight: bold; color: var(--primary); margin-left: 10px; flex-shrink: 0; }
-    .products-table td:nth-child(3)::before { content: "📦 اسم المنتج:"; font-weight: bold; color: var(--primary); margin-left: 10px; flex-shrink: 0; }
-    .products-table td:nth-child(4)::before { content: "📏 المقاس:"; font-weight: bold; color: var(--primary); margin-left: 10px; flex-shrink: 0; }
-    .products-table td:nth-child(5)::before { content: "🔢 العدد:"; font-weight: bold; color: var(--primary); margin-left: 10px; flex-shrink: 0; }
+    .products-table td:nth-child(2)::before { content: "🏢 اسم الشركة:";  font-weight: bold; color: var(--primary); margin-left: 10px; flex-shrink: 0; }
+    .products-table td:nth-child(3)::before { content: "📦 اسم المنتج:";  font-weight: bold; color: var(--primary); margin-left: 10px; flex-shrink: 0; }
+    .products-table td:nth-child(4)::before { content: "📏 المقاس:";       font-weight: bold; color: var(--primary); margin-left: 10px; flex-shrink: 0; }
+    .products-table td:nth-child(5)::before { content: "🔢 العدد:";        font-weight: bold; color: var(--primary); margin-left: 10px; flex-shrink: 0; }
 
-    /* تنسيق الخانات المدخلة (inputs) لتكون محتواة داخل الشاشة وموسطة تماماً */
     .products-table td input, select, .main-info input {
-        width: 65% !important; /* مساحة متناسقة بجانب النص التوضيحي */
+        width: 65% !important;
         max-width: 100%;
         padding: 10px;
         font-size: 14px;
@@ -239,7 +233,6 @@ label {
         box-sizing: border-box;
     }
 
-    /* تعديل حاوية زر الحذف ليكون في أسفل البطاقة بشكل منظم */
     .products-table td.delete-col {
         justify-content: center;
         margin-top: 5px;
@@ -254,22 +247,21 @@ label {
 }
 
 /* ==========================================================================
-   🖥️ 3. التنسيق المتجاوب عند عرضها على الكمبيوتر والأجهزة اللوحية العريضة
+   🖥️ 3. تنسيق الكمبيوتر
    ========================================================================== */
 @media (min-width: 601px) {
-    body { padding: 30px; }
+    body       { padding: 30px; }
     .container { padding: 30px; }
-    
-    .main-info { 
-        grid-template-columns: 1fr 1fr; /* تقسيم حقول الفرع والموظف بجانب بعضهما */
-        gap: 20px; 
-    }
-    
-    .btn-add { width: auto; } 
-    .actions-section { flex-direction: row; } /* أزرار استخراج الملفات تصبح متجاورة */
-    .meta-header { flex-direction: row; justify-content: space-between; }
 
-    /* إعادة الشكل التقليدي للجدول عند توفر مساحة عرض كافية */
+    .main-info {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .btn-add         { width: auto; }
+    .actions-section { flex-direction: row; }
+    .meta-header     { flex-direction: row; justify-content: space-between; }
+
     .products-table th, .products-table td {
         border: 1px solid #ddd;
         padding: 10px;
@@ -287,100 +279,15 @@ label {
         border-radius: 4px;
         text-align: center;
     }
-    /* تحديد نسب عرض خلايا الجدول المتناسقة على الكمبيوتر */
-    .products-table th:nth-child(1), .products-table td:nth-child(1) { width: 45px; } 
-    .products-table th:nth-child(2), .products-table td:nth-child(2) { width: 25%; } 
-    .products-table th:nth-child(3), .products-table td:nth-child(3) { width: 30%; } 
-    .products-table th:nth-child(4), .products-table td:nth-child(4) { width: 15%; } 
-    .products-table th:nth-child(5), .products-table td:nth-child(5) { width: 15%; } 
-    .products-table th:nth-child(6), .products-table td:nth-child(6) { width: 75px; } 
+
+    .products-table th:nth-child(1), .products-table td:nth-child(1) { width: 45px; }
+    .products-table th:nth-child(2), .products-table td:nth-child(2) { width: 25%; }
+    .products-table th:nth-child(3), .products-table td:nth-child(3) { width: 30%; }
+    .products-table th:nth-child(4), .products-table td:nth-child(4) { width: 15%; }
+    .products-table th:nth-child(5), .products-table td:nth-child(5) { width: 15%; }
+    .products-table th:nth-child(6), .products-table td:nth-child(6) { width: 75px; }
 }
 
-/* ==========================================================================
-   ⚡ 4. كلاس الـ PDF النشط للتوسيط الحتمي وإلغاء شكل المدخلات التقليدي عند التصدير
-   ========================================================================== */
-.pdf-mode .pdf-official-header { display: block !important; }
-.pdf-mode #siteMainTitle, .pdf-mode .stats-bar { display: none !important; } 
-.pdf-mode .main-info { display: flex !important; flex-direction: row !important; justify-content: space-around !important; text-align: center !important; margin-bottom: 20px !important; } 
-.pdf-mode .form-group { width: 45% !important; }
-
-/* إلغاء الـ overflow تماماً لمنع قص الأصناف الأخيرة على الجوال */
-.pdf-mode .table-responsive { 
-    overflow: visible !important; 
-    overflow-x: visible !important;
-    max-height: none !important;
-    height: auto !important;
-    border: none !important; 
-}
-
-/* إجبار البيانات على العودة لشكل الجدول الرسمي الموسط في الـ PDF وإلغاء بطاقات الجوال */
-.pdf-mode .products-table { min-width: 100% !important; width: 100% !important; table-layout: auto !important; }
-.pdf-mode .products-table thead { display: table-header-group !important; }
-.pdf-mode .products-table tr { 
-    display: table-row !important; 
-    background: transparent !important; 
-    padding: 0 !important; 
-    margin: 0 !important; 
-    border: none !important; 
-    box-shadow: none !important; 
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-}
-.pdf-mode .products-table td { display: table-cell !important; width: auto !important; border: 1px solid #ddd !important; }
-.pdf-mode .products-table td::before { display: none !important; }
-
-/* إخفاء عناصر التحكم والأزرار من مستند الـ PDF النظيف */
-.pdf-mode .btn, .pdf-mode .actions-section, .pdf-mode #orderForm button, .pdf-mode .delete-col { display: none !important; }
-
-/* تحويل المدخلات إلى نصوص عادية سوداء وموسطة داخل الأوراق الرسمية لمنع التظليل الرمادي */
-.pdf-mode input, .pdf-mode select { 
-    border: none !important; 
-    background: transparent !important; 
-    background-color: rgba(255, 255, 255, 0) !important; 
-    appearance: none !important; 
-    -webkit-appearance: none !important; 
-    -moz-appearance: none !important;    
-    color: #000 !important; 
-    font-weight: bold !important; 
-    text-align: center !important; 
-    font-size: 14px !important; 
-    opacity: 1 !important; 
-    -webkit-text-fill-color: #000 !important; 
-}
-
-/* إلغاء تام لتنسيق الجوال عند توليد PDF */
-.pdf-mode .products-table thead {
-    display: table-header-group !important;
-}
-.pdf-mode .products-table tbody {
-    display: table-row-group !important;
-}
-.pdf-mode .products-table tr {
-    display: table-row !important;
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    box-shadow: none !important;
-}
-.pdf-mode .products-table td,
-.pdf-mode .products-table th {
-    display: table-cell !important;
-    border: 1px solid #ddd !important;
-    padding: 8px !important;
-    text-align: center !important;
-    width: auto !important;
-    flex: unset !important;
-}
-.pdf-mode .products-table td::before {
-    display: none !important;
-    content: none !important;
-}
-.pdf-mode .products-table td.row-number {
-    background: transparent !important;
-    color: #000 !important;
-    justify-content: center !important;
-}
 footer {
     text-align: center;
     padding: 15px;
