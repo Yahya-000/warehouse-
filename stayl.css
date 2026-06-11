@@ -10,7 +10,7 @@
 }
 
 *, *::before, *::after {
-    box-sizing: border-box; /* يمنع خروج المدخلات نهائياً عن الشاشة بحساب الحواف داخلياً */
+    box-sizing: border-box; /* يمنع خروج المدخلات نهائياً عن الشاشة */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
@@ -18,7 +18,6 @@
 
 body {
     background-color: var(--bg);
-    
     color: #333;
     padding: 10px; /* هوامش صغيرة مريحة لشاشات الهواتف */
 }
@@ -59,7 +58,7 @@ h2, h3 {
     color: #555;
 }
 
-/* شريط التوقيت (موسط وتلقائي التجاوب للطول والعرض) */
+/* شريط التوقيت (موسط وتلقائي التجاوب) */
 .meta-header {
     display: none;
     flex-direction: column;
@@ -117,7 +116,6 @@ h2, h3 {
     box-sizing: border-box;
 }
 
-
 label {
     margin-bottom: 6px;
     font-weight: bold;
@@ -140,26 +138,10 @@ label {
     gap: 5px;
 }
 
-.btn-add { 
-    background-color: var(--accent);
-     color: white;
-      width: 100%; 
-    }
-.btn-submit { 
-    background-color: var(--success); 
-    color: white; width: 100%;
-     margin-top: 15px;
-     }
-.btn-danger { 
-    background-color: var(--danger); 
-    color: white; 
-    padding: 6px 12px; 
-    font-size: 13px; 
-}
-.btn-edit { 
-    background-color: #f39c12;
-     color: white; 
-    }
+.btn-add { background-color: var(--accent); color: white; width: 100%; }
+.btn-submit { background-color: var(--success); color: white; width: 100%; margin-top: 15px; }
+.btn-danger { background-color: var(--danger); color: white; padding: 6px 12px; font-size: 13px; }
+.btn-edit { background-color: #f39c12; color: white; }
 
 /* حاوية أزرار تصدير ومشاركة الملفات */
 .actions-section {
@@ -202,7 +184,6 @@ label {
    📱 2. كود التناسق الذكي للجدول والمدخلات على شاشات الجوال (Responsive Cards)
    ========================================================================== */
 @media (max-width: 600px) {
-    
     /* إخفاء ترويسة الجدول التقليدية لأنها تسبب تداخل الحروف على الشاشات الضيقة */
     .products-table thead {
         display: none;
@@ -248,7 +229,7 @@ label {
 
     /* تنسيق الخانات المدخلة (inputs) لتكون محتواة داخل الشاشة وموسطة تماماً */
     .products-table td input, select, .main-info input {
-        width: 65% !important; /* إعطاء مساحة متناسقة بجانب النص التوضيحي */
+        width: 65% !important; /* مساحة متناسقة بجانب النص التوضيحي */
         max-width: 100%;
         padding: 10px;
         font-size: 14px;
@@ -307,12 +288,12 @@ label {
         text-align: center;
     }
     /* تحديد نسب عرض خلايا الجدول المتناسقة على الكمبيوتر */
-    .products-table th:nth-child(1), .products-table td:nth-child(1) { width: 45px; }  /* م */
-    .products-table th:nth-child(2), .products-table td:nth-child(2) { width: 25%; }  /* اسم الشركة */
-    .products-table th:nth-child(3), .products-table td:nth-child(3) { width: 30%; }  /* اسم المنتج */
-    .products-table th:nth-child(4), .products-table td:nth-child(4) { width: 15%; }  /* المقاس */
-    .products-table th:nth-child(5), .products-table td:nth-child(5) { width: 15%; }  /* الكمية */
-    .products-table th:nth-child(6), .products-table td:nth-child(6) { width: 75px; }  /* إجراء الحذف */
+    .products-table th:nth-child(1), .products-table td:nth-child(1) { width: 45px; } 
+    .products-table th:nth-child(2), .products-table td:nth-child(2) { width: 25%; } 
+    .products-table th:nth-child(3), .products-table td:nth-child(3) { width: 30%; } 
+    .products-table th:nth-child(4), .products-table td:nth-child(4) { width: 15%; } 
+    .products-table th:nth-child(5), .products-table td:nth-child(5) { width: 15%; } 
+    .products-table th:nth-child(6), .products-table td:nth-child(6) { width: 75px; } 
 }
 
 /* ==========================================================================
@@ -322,48 +303,52 @@ label {
 .pdf-mode #siteMainTitle, .pdf-mode .stats-bar { display: none !important; } 
 .pdf-mode .main-info { display: flex !important; flex-direction: row !important; justify-content: space-around !important; text-align: center !important; margin-bottom: 20px !important; } 
 .pdf-mode .form-group { width: 45% !important; }
-.pdf-mode .table-responsive { overflow-x: visible !important; border: none !important; }
+
+/* إلغاء الـ overflow تماماً لمنع قص الأصناف الأخيرة على الجوال */
+.pdf-mode .table-responsive { 
+    overflow: visible !important; 
+    overflow-x: visible !important;
+    max-height: none !important;
+    height: auto !important;
+    border: none !important; 
+}
 
 /* إجبار البيانات على العودة لشكل الجدول الرسمي الموسط في الـ PDF وإلغاء بطاقات الجوال */
 .pdf-mode .products-table { min-width: 100% !important; width: 100% !important; table-layout: auto !important; }
 .pdf-mode .products-table thead { display: table-header-group !important; }
-.pdf-mode .products-table tr { display: table-row !important; background: transparent !important; padding: 0 !important; margin: 0 !important; border: none !important; box-shadow: none !important; }
+.pdf-mode .products-table tr { 
+    display: table-row !important; 
+    background: transparent !important; 
+    padding: 0 !important; 
+    margin: 0 !important; 
+    border: none !important; 
+    box-shadow: none !important; 
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
 .pdf-mode .products-table td { display: table-cell !important; width: auto !important; border: 1px solid #ddd !important; }
 .pdf-mode .products-table td::before { display: none !important; }
 
 /* إخفاء عناصر التحكم والأزرار من مستند الـ PDF النظيف */
 .pdf-mode .btn, .pdf-mode .actions-section, .pdf-mode #orderForm button, .pdf-mode .delete-col { display: none !important; }
 
-/* تحويل المدخلات إلى نصوص عادية سوداء وموسطة داخل الأوراق الرسمية */
-/* التعديل الذكي لمنع التظليل في الـ PDF على الجوال */
+/* تحويل المدخلات إلى نصوص عادية سوداء وموسطة داخل الأوراق الرسمية لمنع التظليل الرمادي */
 .pdf-mode input, .pdf-mode select { 
     border: none !important; 
-    background: transparent !important; /* إجبار الخلفية على الاختفاء */
-    background-color: rgba(255, 255, 255, 0) !important; /* إلغاء التظليل الرمادي */
+    background: transparent !important; 
+    background-color: rgba(255, 255, 255, 0) !important; 
     appearance: none !important; 
-    -webkit-appearance: none !important; /* إلغاء مظهر حقول الآيفون الافتراضي */
-    -moz-appearance: none !important;    /* إلغاء مظهر حقول الأندرويد الافتراضي */
+    -webkit-appearance: none !important; 
+    -moz-appearance: none !important;    
     color: #000 !important; 
     font-weight: bold !important; 
     text-align: center !important; 
     font-size: 14px !important; 
-    opacity: 1 !important; /* إجبار الخط على الظهور بكامل وضوحه بدون باهت أو تظليل */
-    -webkit-text-fill-color: #000 !important; /* حل مخصص للآيفون لإجبار اللون الأسود الحاد */
+    opacity: 1 !important; 
+    -webkit-text-fill-color: #000 !important; 
 }
 
-/* منع قفل أو قص الجدول والأصناف عند التصدير في وضع PDF */
-.pdf-mode .table-responsive {
-    overflow: visible !important;
-    max-height: none !important;
-    height: auto !important;
-}
-
-.pdf-mode .products-table tr {
-    page-break-inside: avoid !important; /* يمنع كسر السطر الواحد نصفين */
-    break-inside: avoid !important;
-}
-
-Footer {
+footer {
     text-align: center;
     padding: 15px;
     font-size: 13px;
