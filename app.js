@@ -11,31 +11,36 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("input", saveDataToStorage);
 });
 
+// قالب كود القائمة المنسدلة للشركات لضمان تطابقها بالكامل في كل العمليات
+const companySelectHTML = `
+  <select name="comp" class="comp-name" required oninput="saveDataToStorage()">
+      <option value="">اختر الشركة</option>
+      <option value="شركة عصفور">شركة عصفور</option>
+      <option value="شركة جيلستون">شركة جيلستون</option>
+      <option value="شركة سوارفسكي">شركة سوارفسكي</option>
+      <option value="شركة شيكي">شركة شيكي</option>
+      <option value="شركة دارونز">شركة دارونز</option>
+      <option value="شركة دارونز ابو قاعدة">شركة دارونز ابو قاعدة</option>
+  </select>
+`;
+
 // دالة إعادة الترقيم التسلسلي للخانات وتحديث العداد في الشاشة وحفظ التغييرات
 function reorderRows() {
   const rows = document.querySelectorAll("#tableBody tr");
   rows.forEach((row, index) => {
     row.querySelector(".row-number").innerText = index + 1;
   });
-  document.getElementById("itemsCounter").innerText = rows.length + " أصناف";
-  saveDataToStorage(); // حفظ بعد إعادة الترتيب
+  document.getElementById("itemsCounter").innerText = rows.length;
+  saveDataToStorage(); // حفظ التغييرات تلقائياً بعد إعادة الترتيب
 }
 
-// إضافة صنف جديد
+// إضافة صنف جديد للجدول
 function addNewRow() {
   const tbody = document.getElementById("tableBody");
   const newRow = document.createElement("tr");
   newRow.innerHTML = `
             <td class="row-number"></td>
-            <td> <select name="comp" class="comp-name" required oninput="saveDataToStorage()">
-                <option value="">اختر الشركة</option>
-                <option value="شركة عصفور">شركة عصفور</option>
-                <option value="شركة جيلستون">شركة جيلستون</option>
-                <option value="شركة سوارفسكي">شركة سوارفسكي</option>
-                <option value="شركة شيكي">شركة شيكي</option>
-                <option value="شركة دارونز">شركة دارونز</option>
-                <option value="شركة دارونز ابو قاعدة">شركة دارونز ابو قاعدة</option>
-            </select ></td>
+            <td>${companySelectHTML}</td>
             <td><input type="text" class="prod-name" required placeholder="مثال:  6883 فضي" oninput="saveDataToStorage()"></td>
             <td><input type="text" class="prod-size" required placeholder="مثال: SS10 / mm18" oninput="saveDataToStorage()"></td>
             <td><input type="number" class="prod-qty" min="1" required placeholder="0" oninput="saveDataToStorage()"></td>
@@ -45,7 +50,7 @@ function addNewRow() {
   reorderRows();
 }
 
-// حذف صنف
+// حذف صنف من الجدول
 function deleteRow(button) {
   const row = button.parentNode.parentNode;
   const tbody = document.getElementById("tableBody");
@@ -85,6 +90,7 @@ document.getElementById("orderForm").addEventListener("submit", function (e) {
   saveDataToStorage(); // حفظ حالة الاعتماد والتوقيت
 });
 
+// تفعيل وضع التعديل وإلغاء قفل الحقول
 function enableEditing() {
   toggleInputs(false);
   document.getElementById("submitBtn").style.display = "block";
@@ -92,17 +98,18 @@ function enableEditing() {
   document.getElementById("editBtn").style.display = "none";
   document.getElementById("actionButtons").style.display = "none";
   document.getElementById("metaHeader").style.display = "none";
-  saveDataToStorage(); // حفظ حالة التعديل
+  saveDataToStorage(); // حفظ حالة التعديل الجديدة
 }
 
+// دالة قفل أو فتح حقول الإدخال
 function toggleInputs(disable) {
   const inputs = document.querySelectorAll("input, select");
   inputs.forEach((input) => (input.disabled = disable));
 }
 
-// ==========================================
-//  وظائف الحفظ التلقائي والاسترجاع (Local Storage)
-// ==========================================
+// ========================================================
+// 💾 وظائف الحفظ التلقائي والاسترجاع من الذاكرة المحلية (Local Storage)
+// ========================================================
 
 function saveDataToStorage() {
   const branch = document.getElementById("branchLocation").value;
@@ -114,12 +121,20 @@ function saveDataToStorage() {
   const items = [];
   const rows = document.querySelectorAll("#tableBody tr");
   rows.forEach((row) => {
-    items.push({
-      comp: row.querySelector(".comp-name").value,
-      prod: row.querySelector(".prod-name").value,
-      size: row.querySelector(".prod-size").value,
-      qty: row.querySelector(".prod-qty").value,
-    });
+    // التأكد من وجود العناصر قبل جلب قيمتها لتجنب الأخطاء البرمجية
+    const compElem = row.querySelector(".comp-name");
+    const prodElem = row.querySelector(".prod-name");
+    const sizeElem = row.querySelector(".prod-size");
+    const qtyElem = row.querySelector(".prod-qty");
+
+    if (compElem && prodElem && sizeElem && qtyElem) {
+      items.push({
+        comp: compElem.value,
+        prod: prodElem.value,
+        size: sizeElem.value,
+        qty: qtyElem.value,
+      });
+    }
   });
 
   const orderData = { branch, employee, isSubmitted, timestamp, items };
@@ -132,37 +147,39 @@ function loadDataFromStorage() {
 
   const data = JSON.parse(savedData);
 
-  // استعادة البيانات الأساسية
+  // استعادة البيانات الأساسية للفرع والموظف
   document.getElementById("branchLocation").value = data.branch || "";
   document.getElementById("employeeName").value = data.employee || "";
 
-  // استعادة عناصر الجدول
+  // استعادة عناصر الجدول مع الحفاظ على القائمة المنسدلة للشركات سليمة وثابتة
   if (data.items && data.items.length > 0) {
     const tbody = document.getElementById("tableBody");
-    tbody.innerHTML = ""; // مسح السطر الافتراضي الأول لبناء القديم
+    tbody.innerHTML = "";
 
     data.items.forEach((item) => {
       const newRow = document.createElement("tr");
       newRow.innerHTML = `
                 <td class="row-number"></td>
-                <td><input type="text" class="comp-name" required placeholder="مثال: عصفور" value="${item.comp}" oninput="saveDataToStorage()"></td>
+                <td>${companySelectHTML}</td>
                 <td><input type="text" class="prod-name" required placeholder="مثال:  6883 فضي" value="${item.prod}" oninput="saveDataToStorage()"></td>
                 <td><input type="text" class="prod-size" required placeholder="مثال: SS10 / mm18" value="${item.size}" oninput="saveDataToStorage()"></td>
                 <td><input type="number" class="prod-qty" min="1" required placeholder="0" value="${item.qty}" oninput="saveDataToStorage()"></td>
                 <td class="delete-col"><button type="button" class="btn btn-danger" onclick="deleteRow(this)">حذف</button></td>
             `;
+
+      // تعيين القيمة المحددة مسبقاً داخل القائمة المنسدلة بدقة
       tbody.appendChild(newRow);
+      newRow.querySelector(".comp-name").value = item.comp;
     });
 
-    // تحديث الأرقام والعداد بدون استدعاء دالة الحفظ مرة أخرى لتفادي التكرار اللانهائي
     const rows = document.querySelectorAll("#tableBody tr");
     rows.forEach((row, index) => {
       row.querySelector(".row-number").innerText = index + 1;
     });
-    document.getElementById("itemsCounter").innerText = rows.length + " أصناف";
+    document.getElementById("itemsCounter").innerText = rows.length;
   }
 
-  // استعادة حالة الأزرار والاعتماد
+  // استعادة حالة الأزرار والاعتماد والتوقيت
   if (data.isSubmitted) {
     document.getElementById("orderTimestamp").innerHTML = data.timestamp;
     document.getElementById("metaHeader").style.display = "flex";
@@ -174,42 +191,40 @@ function loadDataFromStorage() {
   }
 }
 
-// الدالة الجديدة لمسح الذاكرة وتصفير الفاتورة لبدء واحدة جديدة
+// تصفير الجدول بالكامل لبدء فاتورة جديدة ومسح الذاكرة
 function createNewInvoice() {
   if (confirm("هل أنت متأكد من رغبتك في تصفير الجدول وإنشاء فاتورة جديدة؟")) {
-    localStorage.removeItem("savedOrderData"); // مسح الذاكرة المخزنة
-    location.reload(); // إعادة تحميل الصفحة لتظهر فارغة تماماً للطلب الجديد
+    localStorage.removeItem("savedOrderData");
+    location.reload();
   }
 }
 
-// توليد ملف PDF احترافي عبر محرك النظام يمتد لعدد لانهائي من الصفحات
+// توليد ملف PDF احترافي عبر محرك طباعة المتصفح/النظام الافتراضي
 function shareAsPDF() {
-  // 1. مزامنة كل النصوص التي كتبها الموظف داخل الخانات لكي تظهر في الطباعة بنجاح
-  const inputs = document.querySelectorAll("#invoiceContainer input, #invoiceContainer select");
-  inputs.forEach(input => {
-    input.setAttribute('value', input.value);
-    
-    // إذا كان خياراً محدداً من القائمة (Select)
-    if(input.tagName === 'SELECT') {
+  const inputs = document.querySelectorAll(
+    "#invoiceContainer input, #invoiceContainer select",
+  );
+  inputs.forEach((input) => {
+    input.setAttribute("value", input.value);
+
+    if (input.tagName === "SELECT") {
       const selectedOption = input.options[input.selectedIndex];
-      if(selectedOption) {
-        // نضمن ثبات الخيار المحدد عند الطباعة
+      if (selectedOption) {
         for (let i = 0; i < input.options.length; i++) {
           if (i === input.selectedIndex) {
-            input.options[i].setAttribute('selected', 'selected');
+            input.options[i].setAttribute("selected", "selected");
           } else {
-            input.options[i].removeAttribute('selected');
+            input.options[i].removeAttribute("selected");
           }
         }
       }
     }
   });
 
-  // 2. استدعاء أمر طباعة النظام (والذي يتيح للمستخدم الحفظ كـ PDF بأعلى دقة)
   window.print();
 }
 
-// تصدير ملف الاكسل
+// تصدير البيانات بالكامل إلى ملف Excel منظم وملون تلقائياً
 function exportToExcel() {
   const branch = document.getElementById("branchLocation").value;
   const employee = document.getElementById("employeeName").value;
