@@ -118,6 +118,16 @@ input, select {
     border-collapse: collapse;
     margin-bottom: 20px;
 }
+.products-table .prod-name{
+    width: 200px;
+}
+.products-table .prod-size {
+    width: 150px;
+}
+.products-table .prod-qty{
+    width: 60px;
+}
+
 
 .products-table th, .products-table td {
     border: 1px solid #ddd;
@@ -324,6 +334,7 @@ input, select {
     .form-group {
         flex: 1 !important;
     }
+    
     input, select, input:disabled, select:disabled {
         border: none !important;
         background: transparent !important;
@@ -335,6 +346,7 @@ input, select {
         -webkit-appearance: none !important;
         opacity: 1 !important; 
         text-align: center !important;
+        padding: 1px;
     }
     #tableBody tr {
         page-break-inside: avoid !important;
