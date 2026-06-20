@@ -60,9 +60,10 @@
         <table class="products-table" id="itemsTable">
             <thead>
                 <tr>
-                    <th style="width: 60px;">الرقم</th> 
+                     <th style="width: 60px;">الرقم</th> 
                     <th>اسم الشركة</th>
-                    <th>الصنف / الون </th>
+                    <th> الصنف </th>
+                    <th> الون </th>
                     <th>المقاس</th>
                     <th>العدد </th>
                     <th class="delete-col">إجراء</th>
@@ -71,7 +72,8 @@
             <tbody id="tableBody">
     <tr>
         <td class="row-number">1</td> 
-        <td> <select name="comp" id="comp1" class="comp-name" required oninput="saveDataToStorage()">
+        <td> 
+            <select name="comp" class="comp-name" required onchange="handleCompanyChange(this); saveDataToStorage();">
                 <option value="">اختر الشركة</option>
                 <option value="شركة عصفور">شركة عصفور</option>
                 <option value="شركة جيلستون">شركة جيلستون</option>
@@ -79,11 +81,23 @@
                 <option value="شركة شيكي">شركة شيكي</option>
                 <option value="شركة دارونز">شركة دارونز</option>
                 <option value="شركة دارونز ابو قاعدة">شركة دارونز ابو قاعدة</option>
-            </select ></td>
-        <td><input type="text" class="prod-name" required placeholder="مثال:  6883 فضي" oninput="saveDataToStorage()"></td>
-        <td><input type="text" class="prod-size" required placeholder="مثال: SS10 / mm18" oninput="saveDataToStorage()"></td>
-        <td><input type="number" class="prod-qty" min="1" required placeholder="0" oninput="saveDataToStorage()"></td>
-        <td class="delete-col"><button type="button" class="btn btn-danger" onclick="deleteRow(this)">حذف</button></td>
+            </select>
+        </td>
+        <td>
+            <input type="text" class="prod-name" required placeholder="مثال:  6883" oninput="saveDataToStorage()">
+        </td>
+        <td class="color-container">
+            <input type="text" class="prod-name22" required placeholder="اللون" oninput="saveDataToStorage()">
+        </td>
+        <td>
+            <input type="text" class="prod-size" required placeholder="مثال: SS10 / mm18" oninput="saveDataToStorage()">
+        </td>
+        <td>
+            <input type="number" class="prod-qty" min="1" required placeholder="0" oninput="saveDataToStorage()">
+        </td>
+        <td class="delete-col">
+            <button type="button" class="btn btn-danger" onclick="deleteRow(this)">حذف</button>
+        </td>
     </tr>
 </tbody>
         </table>

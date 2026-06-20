@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // قالب كود القائمة المنسدلة للشركات لضمان تطابقها بالكامل في كل العمليات
 const companySelectHTML = `
-  <select name="comp" class="comp-name" required oninput="saveDataToStorage()">
+  <select name="comp" class="comp-name" required onchange="handleCompanyChange(this); saveDataToStorage();">
       <option value="">اختر الشركة</option>
       <option value="شركة عصفور">شركة عصفور</option>
       <option value="شركة جيلستون">شركة جيلستون</option>
@@ -23,6 +23,61 @@ const companySelectHTML = `
       <option value="شركة دارونز ابو قاعدة">شركة دارونز ابو قاعدة</option>
   </select>
 `;
+
+// دالة للتحكم في نوع خانة "اللون" بناءً على الشركة المختارة
+function handleCompanyChange(selectElement) {
+  const row = selectElement.closest("tr");
+  const colorContainer = row.querySelector(".color-container");
+
+  if (!colorContainer) return;
+
+  const selectedCompany = selectElement.value;
+
+  // الشرط: إذا اختار "شركة دارونز ابو قاعدة" تتحول خانة اللون إلى قائمة منسدلة
+  if (selectedCompany === "شركة دارونز ابو قاعدة") {
+    colorContainer.innerHTML = `
+          <select class="prod-name22" required onchange="saveDataToStorage()">
+                  <option value="">اختر اللون...</option>
+                  <option value="101">101</option>
+                  <option value="102">102</option>
+                  <option value="103">103</option>
+                  <option value="104">104</option>
+                  <option value="105">105</option>
+                  <option value="109">109</option>
+                  <option value="110">110</option>
+                  <option value="111">111</option>
+                  <option value="112">112</option>
+                  <option value="113">113</option>
+                  <option value="114">114</option>
+                  <option value="115">115</option>
+                  <option value="116">116</option>
+                  <option value="117">117</option>
+                  <option value="118">118</option>
+                  <option value="119">119</option>
+                  <option value="120">120</option>
+                  <option value="121">121</option>
+                  <option value="122">122</option>
+                  <option value="123">123</option>
+                  <option value="124">124</option>
+                  <option value="125">125</option>
+                  <option value="126">126</option>
+                  <option value="127">127</option>
+                  <option value="128">128</option>
+                  <option value="129">129</option>
+                  <option value="130">130</option>
+                  <option value="131">131</option>
+                  <option value="134">134</option>
+                  <option value="135">135</option>
+                  <option value="136">136</option>
+                  <option value="138">138</option>
+                  <option value="140">140</option>
+              </select>
+      `;
+  } else {
+    // إذا اختار أي شركة أخرى، يعود حقل اللون نصياً حراً عادي كما كان
+    colorContainer.innerHTML = `<input type="text" class="prod-name22" required placeholder="اللون" oninput="saveDataToStorage()">`;
+  }
+}
 
 // دالة إعادة الترقيم التسلسلي للخانات وتحديث العداد في الشاشة وحفظ التغييرات
 function reorderRows() {
@@ -41,9 +96,10 @@ function addNewRow() {
   newRow.innerHTML = `
             <td class="row-number"></td>
             <td>${companySelectHTML}</td>
-            <td><input type="text" class="prod-name" required placeholder="مثال:  6883 فضي" oninput="saveDataToStorage()"></td>
-            <td><input type="text" class="prod-size" required placeholder="مثال: SS10 / mm18" oninput="saveDataToStorage()"></td>
-            <td><input type="number" class="prod-qty" min="1" required placeholder="0" oninput="saveDataToStorage()"></td>
+            <td><input type="text" class="prod-name" required placeholder="الصنف" oninput="saveDataToStorage()"></td>
+            <td class="color-container"><input type="text" class="prod-name22" required placeholder="اللون" oninput="saveDataToStorage()"></td>
+            <td><input type="text" class="prod-size" required placeholder="المقاس" oninput="saveDataToStorage()"></td>
+            <td><input type="number" class="prod-qty" min="1" required placeholder="العدد" oninput="saveDataToStorage()"></td>
             <td class="delete-col"><button type="button" class="btn btn-danger" onclick="deleteRow(this)">حذف</button></td>
         `;
   tbody.appendChild(newRow);
@@ -121,16 +177,18 @@ function saveDataToStorage() {
   const items = [];
   const rows = document.querySelectorAll("#tableBody tr");
   rows.forEach((row) => {
-    // التأكد من وجود العناصر قبل جلب قيمتها لتجنب الأخطاء البرمجية
     const compElem = row.querySelector(".comp-name");
     const prodElem = row.querySelector(".prod-name");
+    const colorElem = row.querySelector(".prod-name22");
     const sizeElem = row.querySelector(".prod-size");
     const qtyElem = row.querySelector(".prod-qty");
 
-    if (compElem && prodElem && sizeElem && qtyElem) {
+    if (compElem && prodElem && colorElem && sizeElem && qtyElem) {
       items.push({
         comp: compElem.value,
         prod: prodElem.value,
+        color: colorElem.value,
+        isColorSelect: colorElem.tagName === "SELECT", // حفظ طبيعة حقل اللون إذا كان select أو text
         size: sizeElem.value,
         qty: qtyElem.value,
       });
@@ -143,33 +201,82 @@ function saveDataToStorage() {
 
 function loadDataFromStorage() {
   const savedData = localStorage.getItem("savedOrderData");
-  if (!savedData) return;
+  if (!savedData) {
+    return;
+  }
 
   const data = JSON.parse(savedData);
 
-  // استعادة البيانات الأساسية للفرع والموظف
   document.getElementById("branchLocation").value = data.branch || "";
   document.getElementById("employeeName").value = data.employee || "";
 
-  // استعادة عناصر الجدول مع الحفاظ على القائمة المنسدلة للشركات سليمة وثابتة
   if (data.items && data.items.length > 0) {
     const tbody = document.getElementById("tableBody");
     tbody.innerHTML = "";
 
     data.items.forEach((item) => {
       const newRow = document.createElement("tr");
+
       newRow.innerHTML = `
                 <td class="row-number"></td>
                 <td>${companySelectHTML}</td>
-                <td><input type="text" class="prod-name" required placeholder="مثال:  6883 فضي" value="${item.prod}" oninput="saveDataToStorage()"></td>
+                <td><input type="text" class="prod-name" required placeholder="مثال:  6883" value="${item.prod}" oninput="saveDataToStorage()"></td>
+                <td class="color-container"></td>
                 <td><input type="text" class="prod-size" required placeholder="مثال: SS10 / mm18" value="${item.size}" oninput="saveDataToStorage()"></td>
                 <td><input type="number" class="prod-qty" min="1" required placeholder="0" value="${item.qty}" oninput="saveDataToStorage()"></td>
                 <td class="delete-col"><button type="button" class="btn btn-danger" onclick="deleteRow(this)">حذف</button></td>
             `;
 
-      // تعيين القيمة المحددة مسبقاً داخل القائمة المنسدلة بدقة
       tbody.appendChild(newRow);
       newRow.querySelector(".comp-name").value = item.comp;
+
+      // إعادة بناء حقل اللون بناءً على نوعه المحفوظ في الذاكرة
+      const colorContainer = newRow.querySelector(".color-container");
+      if (item.isColorSelect) {
+        colorContainer.innerHTML = `
+              <select class="prod-name22" required onchange="saveDataToStorage()">
+                  <option value="">اختر اللون...</option>
+                  <option value="101">101</option>
+                  <option value="102">102</option>
+                  <option value="103">103</option>
+                  <option value="104">104</option>
+                  <option value="105">105</option>
+                  <option value="109">109</option>
+                  <option value="110">110</option>
+                  <option value="111">111</option>
+                  <option value="112">112</option>
+                  <option value="113">113</option>
+                  <option value="114">114</option>
+                  <option value="115">115</option>
+                  <option value="116">116</option>
+                  <option value="117">117</option>
+                  <option value="118">118</option>
+                  <option value="119">119</option>
+                  <option value="120">120</option>
+                  <option value="121">121</option>
+                  <option value="122">122</option>
+                  <option value="123">123</option>
+                  <option value="124">124</option>
+                  <option value="125">125</option>
+                  <option value="126">126</option>
+                  <option value="127">127</option>
+                  <option value="128">128</option>
+                  <option value="129">129</option>
+                  <option value="130">130</option>
+                  <option value="131">131</option>
+                  <option value="134">134</option>
+                  <option value="135">135</option>
+                  <option value="136">136</option>
+                  <option value="138">138</option>
+                  <option value="140">140</option>
+              </select>
+          `;
+      } else {
+        colorContainer.innerHTML = `<input type="text" class="prod-name22" required placeholder="اللون" oninput="saveDataToStorage()">`;
+      }
+
+      // تعيين قيمة اللون المختارة أو المكتوبة
+      colorContainer.querySelector(".prod-name22").value = item.color || "";
     });
 
     const rows = document.querySelectorAll("#tableBody tr");
@@ -179,7 +286,6 @@ function loadDataFromStorage() {
     document.getElementById("itemsCounter").innerText = rows.length;
   }
 
-  // استعادة حالة الأزرار والاعتماد والتوقيت
   if (data.isSubmitted) {
     document.getElementById("orderTimestamp").innerHTML = data.timestamp;
     document.getElementById("metaHeader").style.display = "flex";
@@ -199,7 +305,7 @@ function createNewInvoice() {
   }
 }
 
-// توليد ملف PDF احترافي عبر محرك طباعة المتصفح/النظام الافتراضي
+// توليد ملف PDF احترافي عبر محرك طباعة المتصفح
 function shareAsPDF() {
   const inputs = document.querySelectorAll(
     "#invoiceContainer input, #invoiceContainer select",
@@ -224,7 +330,7 @@ function shareAsPDF() {
   window.print();
 }
 
-// تصدير البيانات بالكامل إلى ملف Excel منظم وملون تلقائياً
+// تصدير البيانات بالكامل إلى ملف Excel منظم
 function exportToExcel() {
   const branch = document.getElementById("branchLocation").value;
   const employee = document.getElementById("employeeName").value;
@@ -236,16 +342,17 @@ function exportToExcel() {
     ["موقع الفرع:", branch],
     ["اسم الموظف المسجل:", employee],
     [],
-    ["م", "اسم الشركة", "اسم المنتج", "المقاس", "العدد"],
+    ["م", "اسم الشركة", "الصنف", "اللون", "المقاس", "العدد"],
   ];
 
   const rows = document.querySelectorAll("#tableBody tr");
   rows.forEach((row, index) => {
     const comp = row.querySelector(".comp-name").value;
     const prod = row.querySelector(".prod-name").value;
+    const color = row.querySelector(".prod-name22").value;
     const size = row.querySelector(".prod-size").value;
     const qty = row.querySelector(".prod-qty").value;
-    data.push([index + 1, comp, prod, size, qty]);
+    data.push([index + 1, comp, prod, color, size, qty]);
   });
 
   const ws = XLSX.utils.aoa_to_sheet(data);

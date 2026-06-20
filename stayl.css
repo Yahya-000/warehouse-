@@ -118,6 +118,16 @@ input, select {
     border-collapse: collapse;
     margin-bottom: 20px;
 }
+.products-table .comp-name {
+    width: 200px;
+}
+.products-table .prod-name {
+    width: 120px;
+}
+.products-table .prod-size {
+    width: 120px;
+    font-size: 14px;
+}
 .products-table .prod-qty {
     width: 80px;
 }
@@ -262,9 +272,10 @@ input, select {
 
     /* توليد وحقن العناوين الجانبية والأيقونات التعبيرية يمين الكارت تلقائياً */
     .products-table tbody td:nth-child(2)::before { content: "🗓️ اسم الشركة:"; font-weight: bold; color: #475569; font-size: 14px; }
-    .products-table tbody td:nth-child(3)::before { content: "📦 اسم المنتج:"; font-weight: bold; color: #475569; font-size: 14px; }
-    .products-table tbody td:nth-child(4)::before { content: "📐 المقاس:"; font-weight: bold; color: #475569; font-size: 14px; }
-    .products-table tbody td:nth-child(5)::before { content: "🔢 العدد:"; font-weight: bold; color: #475569; font-size: 14px; }
+    .products-table tbody td:nth-child(3)::before { content: "📦الصنف:"; font-weight: bold; color: #475569; font-size: 14px; }
+    .products-table tbody td:nth-child(4)::before { content: "🎨 اللون:"; font-weight: bold; color: #475569; font-size: 14px; }
+    .products-table tbody td:nth-child(5)::before { content: "📐 المقاس:"; font-weight: bold; color: #475569; font-size: 14px; }
+    .products-table tbody td:nth-child(6)::before { content: "🔢 العدد:"; font-weight: bold; color: #475569; font-size: 14px; }
 
     /* موسطة وتكبير حجم زر الحذف الأحمر أسفل الكارت */
     .products-table td.delete-col {
