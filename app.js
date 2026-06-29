@@ -15,12 +15,12 @@ document.addEventListener("DOMContentLoaded", () => {
 const companySelectHTML = `
   <select name="comp" class="comp-name" required onchange="handleCompanyChange(this); saveDataToStorage();">
       <option value="">اختر الشركة</option>
-      <option value="شركة عصفور">شركة عصفور</option>
-      <option value="شركة جيلستون">شركة جيلستون</option>
-      <option value="شركة سوارفسكي">شركة سوارفسكي</option>
-      <option value="شركة شيكي">شركة شيكي</option>
-      <option value="شركة دارونز">شركة دارونز</option>
-      <option value="شركة دارونز ابو قاعدة">شركة دارونز ابو قاعدة</option>
+      <option value=" عصفور"> عصفور</option>
+      <option value=" جيلستون"> جيلستون</option>
+      <option value=" سوارفسكي"> سوارفسكي</option>
+      <option value=" شيكي"> شيكي</option>
+      <option value=" دارونز"> دارونز</option>
+      <option value=" دارونز ابو قاعدة"> دارونز ابو قاعدة</option>
   </select>
 `;
 
