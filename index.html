@@ -75,12 +75,12 @@
         <td> 
             <select name="comp" class="comp-name" required onchange="handleCompanyChange(this); saveDataToStorage();">
                 <option value="">اختر الشركة</option>
-                <option value=" عصفور"> عصفور</option>
-                <option value=" جيلستون"> جيلستون</option>
-                <option value=" سوارفسكي"> سوارفسكي</option>
-                <option value=" شيكي"> شيكي</option>
-                <option value=" دارونز"> دارونز</option>
-                <option value=" دارونز ابو قاعدة"> دارونز ابو قاعدة</option>
+                <option value=" عصفور">عصفور</option>
+                <option value=" جيلستون">جيلستون</option>
+                <option value=" سوارفسكي">سوارفسكي</option>
+                <option value=" شيكي">شيكي</option>
+                <option value=" دارونز">دارونز</option>
+                <option value=" دارونز ابو قاعدة">دارونز ابو قاعدة</option>
             </select>
         </td>
         <td>
@@ -97,12 +97,15 @@
         </td>
         <td class="delete-col">
             <button type="button" class="btn btn-danger" onclick="deleteRow(this)">حذف</button>
+            <button type="button" class="btn btn-secondary" onclick="repeatRow(this)">تكرار</button>
         </td>
+        
     </tr>
 </tbody>
         </table>
 
         <button type="button" class="btn btn-add" id="addRowBtn" onclick="addNewRow()">➕ إضافة صنف آخر</button>
+       
         
         <button type="submit" class="btn btn-submit" id="submitBtn">✔️ إنشاء واعتماد الطلبية</button>
         <button type="button" class="btn btn-edit" id="editBtn" style="display:none; width: 100%; margin-top: 20px;" onclick="enableEditing()">✏️ تعديل الطلبية الحالية</button>
@@ -110,7 +113,7 @@
 
     <div class="actions-section" id="actionButtons">
         <button class="btn-action bg-pdf" onclick="shareAsPDF()">📄 مشاركة وتحميل ملف PDF  (A4)</button>
-        <button class="btn-action bg-excel" onclick="exportToExcel()">📊 تصدير إلى Excel</button>
+        <!-- <button class="btn-action bg-excel" onclick="exportToExcel()">📊 تصدير إلى Excel</button> -->
         <button class="btn-action bg-new-invoice" onclick="createNewInvoice()">🔄 إنشاء فاتورة جديدة</button>
     </div>
 </div>

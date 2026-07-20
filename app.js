@@ -15,12 +15,12 @@ document.addEventListener("DOMContentLoaded", () => {
 const companySelectHTML = `
   <select name="comp" class="comp-name" required onchange="handleCompanyChange(this); saveDataToStorage();">
       <option value="">اختر الشركة</option>
-      <option value=" عصفور"> عصفور</option>
-      <option value=" جيلستون"> جيلستون</option>
-      <option value=" سوارفسكي"> سوارفسكي</option>
-      <option value=" شيكي"> شيكي</option>
-      <option value=" دارونز"> دارونز</option>
-      <option value=" دارونز ابو قاعدة"> دارونز ابو قاعدة</option>
+      <option value="عصفور">عصفور</option>
+      <option value="جيلستون">جيلستون</option>
+      <option value="سوارفسكي">سوارفسكي</option>
+      <option value="شيكي">شيكي</option>
+      <option value="دارونز">دارونز</option>
+      <option value="دارونز ابو قاعدة">دارونز ابو قاعدة</option>
   </select>
 `;
 
@@ -31,10 +31,10 @@ function handleCompanyChange(selectElement) {
 
   if (!colorContainer) return;
 
-  const selectedCompany = selectElement.value;
+  const selectedCompany = selectElement.value.trim();
 
-  // الشرط: إذا اختار "شركة دارونز ابو قاعدة" تتحول خانة اللون إلى قائمة منسدلة
-  if (selectedCompany === "شركة دارونز ابو قاعدة") {
+  // الشرط: إذا اختار "دارونز ابو قاعدة" تتحول خانة اللون إلى قائمة منسدلة
+  if (selectedCompany === "دارونز ابو قاعدة") {
     colorContainer.innerHTML = `
           <select class="prod-name22" required onchange="saveDataToStorage()">
                   <option value="">اختر اللون...</option>
@@ -89,26 +89,88 @@ function reorderRows() {
   saveDataToStorage(); // حفظ التغييرات تلقائياً بعد إعادة الترتيب
 }
 
+// تكرار الصنف المحدد بضغطة زر التكرار المجاورة لزر الحذف
+function repeatRow(button) {
+  const currentRow = button.closest("tr");
+  if (!currentRow) return;
+
+  // قراءة القيم من السطر الحالي
+  const currentComp = currentRow.querySelector(".comp-name")
+    ? currentRow.querySelector(".comp-name").value
+    : "";
+  const currentProd = currentRow.querySelector(".prod-name")
+    ? currentRow.querySelector(".prod-name").value
+    : "";
+  const currentColor = currentRow.querySelector(".prod-name22")
+    ? currentRow.querySelector(".prod-name22").value
+    : "";
+  const currentSize = currentRow.querySelector(".prod-size")
+    ? currentRow.querySelector(".prod-size").value
+    : "";
+  const currentQty = currentRow.querySelector(".prod-qty")
+    ? currentRow.querySelector(".prod-qty").value
+    : "";
+
+  const tbody = document.getElementById("tableBody");
+  const newRow = document.createElement("tr");
+
+  // بناء السطر الجديد مع زر تكرار وزر حذف بجانبه
+  newRow.innerHTML = `
+      <td class="row-number"></td>
+      <td>${companySelectHTML}</td>
+      <td><input type="text" class="prod-name" required placeholder="مثال: 6883" value="${currentProd}" oninput="saveDataToStorage()"></td>
+      <td class="color-container"></td>
+      <td><input type="text" class="prod-size" required placeholder="مثال: SS10 / mm18" value="${currentSize}" oninput="saveDataToStorage()"></td>
+      <td><input type="number" class="prod-qty" min="1" required placeholder="0" value="${currentQty}" oninput="saveDataToStorage()"></td>
+      <td class="delete-col">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="repeatRow(this)" style="margin-left: 4px;">تكرار</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(this)">حذف</button>
+      </td>
+  `;
+
+  // إدراج السطر الجديد بعد السطر المكرر مباشرة
+  currentRow.after(newRow);
+
+  // تعيين قيمة الشركة وتحديث نوع حقل اللون وفقاً لها
+  const newCompSelect = newRow.querySelector(".comp-name");
+  if (newCompSelect) {
+    newCompSelect.value = currentComp;
+    handleCompanyChange(newCompSelect);
+  }
+
+  // تعيين قيمة اللون للسطر الجديد
+  const newColorInput = newRow.querySelector(".prod-name22");
+  if (newColorInput) {
+    newColorInput.value = currentColor;
+  }
+
+  reorderRows();
+  saveDataToStorage();
+}
+
 // إضافة صنف جديد للجدول
 function addNewRow() {
   const tbody = document.getElementById("tableBody");
   const newRow = document.createElement("tr");
   newRow.innerHTML = `
-            <td class="row-number"></td>
-            <td>${companySelectHTML}</td>
-            <td><input type="text" class="prod-name" required placeholder="الصنف" oninput="saveDataToStorage()"></td>
-            <td class="color-container"><input type="text" class="prod-name22" required placeholder="اللون" oninput="saveDataToStorage()"></td>
-            <td><input type="text" class="prod-size" required placeholder="المقاس" oninput="saveDataToStorage()"></td>
-            <td><input type="number" class="prod-qty" min="1" required placeholder="العدد" oninput="saveDataToStorage()"></td>
-            <td class="delete-col"><button type="button" class="btn btn-danger" onclick="deleteRow(this)">حذف</button></td>
-        `;
+      <td class="row-number"></td>
+      <td>${companySelectHTML}</td>
+      <td><input type="text" class="prod-name" required placeholder="الصنف" oninput="saveDataToStorage()"></td>
+      <td class="color-container"><input type="text" class="prod-name22" required placeholder="اللون" oninput="saveDataToStorage()"></td>
+      <td><input type="text" class="prod-size" required placeholder="المقاس" oninput="saveDataToStorage()"></td>
+      <td><input type="number" class="prod-qty" min="1" required placeholder="العدد" oninput="saveDataToStorage()"></td>
+      <td class="delete-col">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="repeatRow(this)" style="margin-left: 4px;">تكرار</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(this)">حذف</button>
+      </td>
+  `;
   tbody.appendChild(newRow);
   reorderRows();
 }
 
 // حذف صنف من الجدول
 function deleteRow(button) {
-  const row = button.parentNode.parentNode;
+  const row = button.closest("tr");
   const tbody = document.getElementById("tableBody");
   if (tbody.rows.length > 1) {
     row.remove();
@@ -139,6 +201,9 @@ document.getElementById("orderForm").addEventListener("submit", function (e) {
   toggleInputs(true);
 
   document.getElementById("submitBtn").style.display = "none";
+  if (document.getElementById("repeatRowBtn")) {
+    document.getElementById("repeatRowBtn").style.display = "none";
+  }
   document.getElementById("addRowBtn").style.display = "none";
   document.getElementById("editBtn").style.display = "block";
   document.getElementById("actionButtons").style.display = "flex";
@@ -151,6 +216,9 @@ function enableEditing() {
   toggleInputs(false);
   document.getElementById("submitBtn").style.display = "block";
   document.getElementById("addRowBtn").style.display = "inline-block";
+  if (document.getElementById("repeatRowBtn")) {
+    document.getElementById("repeatRowBtn").style.display = "inline-block";
+  }
   document.getElementById("editBtn").style.display = "none";
   document.getElementById("actionButtons").style.display = "none";
   document.getElementById("metaHeader").style.display = "none";
@@ -159,7 +227,9 @@ function enableEditing() {
 
 // دالة قفل أو فتح حقول الإدخال
 function toggleInputs(disable) {
-  const inputs = document.querySelectorAll("input, select");
+  const inputs = document.querySelectorAll(
+    "input, select, button.btn-secondary, button.btn-danger",
+  );
   inputs.forEach((input) => (input.disabled = disable));
 }
 
@@ -188,7 +258,7 @@ function saveDataToStorage() {
         comp: compElem.value,
         prod: prodElem.value,
         color: colorElem.value,
-        isColorSelect: colorElem.tagName === "SELECT", // حفظ طبيعة حقل اللون إذا كان select أو text
+        isColorSelect: colorElem.tagName === "SELECT",
         size: sizeElem.value,
         qty: qtyElem.value,
       });
@@ -218,14 +288,17 @@ function loadDataFromStorage() {
       const newRow = document.createElement("tr");
 
       newRow.innerHTML = `
-                <td class="row-number"></td>
-                <td>${companySelectHTML}</td>
-                <td><input type="text" class="prod-name" required placeholder="مثال:  6883" value="${item.prod}" oninput="saveDataToStorage()"></td>
-                <td class="color-container"></td>
-                <td><input type="text" class="prod-size" required placeholder="مثال: SS10 / mm18" value="${item.size}" oninput="saveDataToStorage()"></td>
-                <td><input type="number" class="prod-qty" min="1" required placeholder="0" value="${item.qty}" oninput="saveDataToStorage()"></td>
-                <td class="delete-col"><button type="button" class="btn btn-danger" onclick="deleteRow(this)">حذف</button></td>
-            `;
+          <td class="row-number"></td>
+          <td>${companySelectHTML}</td>
+          <td><input type="text" class="prod-name" required placeholder="مثال: 6883" value="${item.prod}" oninput="saveDataToStorage()"></td>
+          <td class="color-container"></td>
+          <td><input type="text" class="prod-size" required placeholder="مثال: SS10 / mm18" value="${item.size}" oninput="saveDataToStorage()"></td>
+          <td><input type="number" class="prod-qty" min="1" required placeholder="0" value="${item.qty}" oninput="saveDataToStorage()"></td>
+          <td class="delete-col">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="repeatRow(this)">تكرار</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(this)">حذف</button>
+          </td>
+      `;
 
       tbody.appendChild(newRow);
       newRow.querySelector(".comp-name").value = item.comp;
@@ -291,6 +364,9 @@ function loadDataFromStorage() {
     document.getElementById("metaHeader").style.display = "flex";
     toggleInputs(true);
     document.getElementById("submitBtn").style.display = "none";
+    if (document.getElementById("repeatRowBtn")) {
+      document.getElementById("repeatRowBtn").style.display = "none";
+    }
     document.getElementById("addRowBtn").style.display = "none";
     document.getElementById("editBtn").style.display = "block";
     document.getElementById("actionButtons").style.display = "flex";
