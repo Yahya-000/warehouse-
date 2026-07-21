@@ -121,7 +121,7 @@ function repeatRow(button) {
       <td><input type="text" class="prod-name" required placeholder="مثال: 6883" value="${currentProd}" oninput="saveDataToStorage()"></td>
       <td class="color-container"></td>
       <td><input type="text" class="prod-size" required placeholder="مثال: SS10 / mm18" value="${currentSize}" oninput="saveDataToStorage()"></td>
-      <td><input type="number" class="prod-qty" min="1" required placeholder="0" value="${currentQty}" oninput="saveDataToStorage()"></td>
+      <td><input type="number" class="prod-qty" min="1" required placeholder="0" " oninput="saveDataToStorage()"></td>
       <td class="delete-col">
         <button type="button" class="btn btn-secondary btn-sm" onclick="repeatRow(this)" style="margin-left: 4px;">تكرار</button>
         <button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(this)">حذف</button>
@@ -139,10 +139,10 @@ function repeatRow(button) {
   }
 
   // تعيين قيمة اللون للسطر الجديد
-  const newColorInput = newRow.querySelector(".prod-name22");
-  if (newColorInput) {
-    newColorInput.value = currentColor;
-  }
+  // const newColorInput = newRow.querySelector(".prod-name22");
+  // if (newColorInput) {
+  //   newColorInput.value = currentColor;
+  // }
 
   reorderRows();
   saveDataToStorage();

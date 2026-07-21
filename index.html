@@ -1,128 +1,202 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>نظام تسجيل طلبيات الفروع للمستودع</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
 
-    <link rel="stylesheet" href="stayl.css">
-</head>
-<body>
-
-<div class="container" id="invoiceContainer">
-    
-    <div class="pdf-official-header">
+    <link rel="stylesheet" href="stayl.css" />
+  </head>
+  <body>
+    <div class="container" id="invoiceContainer">
+      <div class="pdf-official-header">
         <h1>مستند طلب توريد بضائع من مستوع الفصوص</h1>
-        <p>وثيقة  صادرة إلكترونياً من نظام تسجيل طلبات للفروع  الداخلية</p>
-    </div>
+        <p>وثيقة صادرة إلكترونياً من نظام تسجيل طلبات للفروع الداخلية</p>
+      </div>
 
-    <div class="meta-header" id="metaHeader">
-    <span id="orderTimestamp">⏰ وقت الإنشاء: </span>
-    <!-- <span id="orderIdDisplay">📄 رقم الطلبية:</span> -->
-</div>
+      <div class="meta-header" id="metaHeader">
+        <span id="orderTimestamp">⏰ وقت الإنشاء: </span>
+        <!-- <span id="orderIdDisplay">📄 رقم الطلبية:</span> -->
+      </div>
 
-    <h2 id="siteMainTitle">📝 نموذج تسجيل طلبية للمستودع</h2>
-    
-    <form id="orderForm">
+      <h2 id="siteMainTitle">📝 نموذج تسجيل طلبية للمستودع</h2>
+
+      <form id="orderForm">
         <div class="main-info">
-            <div class="form-group">
-                <label for="branchLocation">📍 موقع الفرع:</label>
-                <select id="branchLocation" required>
-                    <option value="">اختر الفرع...</option>
-                    <option value=" بيت الفصوص المكرونة"> بيت الفصوص المكرونة</option>
-                    <option value="فرع بيت الفصوص الهنداوية">فرع بيت الفصوص الهنداوية</option>
-                    <option value="فرع معرض المكرونة">فرع معرض المكرونة</option>
-                    <option value="فرع مركز جار الله">فرع مركز جار الله</option>
-                    <option value="فرع الشاطئ">فرع الشاطئ</option>
-                    <option value="فرع جمجوم">فرع جمجوم</option>
-                    <option value="فرع العلياء">فرع العلياء</option>
-                    <option value="فرع معرض الديرة">فرع معرض الديرة</option>
-                    <option value="فرع الخبر">فرع الخبر</option>
-                    <option value="فرع الدمام">فرع الدمام</option>
-                    <option value="فرع مركز  الديرة">فرع مركز  الديرة</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="employeeName">👤 اسم الموظف:</label>
-                <input type="text" id="employeeName" placeholder="اكتب اسمك الثنائي" required>
-            </div>
+          <div class="form-group">
+            <label for="branchLocation">📍 موقع الفرع:</label>
+            <select id="branchLocation" required>
+              <option value="">اختر الفرع...</option>
+              <option value=" بيت الفصوص المكرونة">بيت الفصوص المكرونة</option>
+              <option value="فرع بيت الفصوص الهنداوية">
+                فرع بيت الفصوص الهنداوية
+              </option>
+              <option value="فرع معرض المكرونة">فرع معرض المكرونة</option>
+              <option value="فرع مركز جار الله">فرع مركز جار الله</option>
+              <option value="فرع الشاطئ">فرع الشاطئ</option>
+              <option value="فرع جمجوم">فرع جمجوم</option>
+              <option value="فرع العلياء">فرع العلياء</option>
+              <option value="فرع معرض الديرة">فرع معرض الديرة</option>
+              <option value="فرع الخبر">فرع الخبر</option>
+              <option value="فرع الدمام">فرع الدمام</option>
+              <option value="فرع مركز  الديرة">فرع مركز الديرة</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="employeeName">👤 اسم الموظف:</label>
+            <input
+              type="text"
+              id="employeeName"
+              placeholder="اكتب اسمك الثنائي"
+              required
+            />
+          </div>
         </div>
 
         <div class="stats-bar">
-            <span>📊 مراجعة الطلب :</span>
-            <span>عدد الأصناف : <span id="itemsCounter" style="color: #2980b9; font-size: 20px; font-weight: bold;">1 </span></span>
+          <span>📊 مراجعة الطلب :</span>
+          <span
+            >عدد الأصناف :
+            <span
+              id="itemsCounter"
+              style="color: #2980b9; font-size: 20px; font-weight: bold"
+              >1
+            </span></span
+          >
         </div>
 
         <h3>📦 تفاصيل الأصناف</h3>
         <table class="products-table" id="itemsTable">
-            <thead>
-                <tr>
-                     <th style="width: 60px;">الرقم</th> 
-                    <th>اسم الشركة</th>
-                    <th> الصنف </th>
-                    <th> الون </th>
-                    <th>المقاس</th>
-                    <th>العدد </th>
-                    <th class="delete-col">إجراء</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-    <tr>
-        <td class="row-number">1</td> 
-        <td> 
-            <select name="comp" class="comp-name" required onchange="handleCompanyChange(this); saveDataToStorage();">
-                <option value="">اختر الشركة</option>
-                <option value=" عصفور">عصفور</option>
-                <option value=" جيلستون">جيلستون</option>
-                <option value=" سوارفسكي">سوارفسكي</option>
-                <option value=" شيكي">شيكي</option>
-                <option value=" دارونز">دارونز</option>
-                <option value=" دارونز ابو قاعدة">دارونز ابو قاعدة</option>
-            </select>
-        </td>
-        <td>
-            <input type="text" class="prod-name" required placeholder="مثال:  6883" oninput="saveDataToStorage()">
-        </td>
-        <td class="color-container">
-            <input type="text" class="prod-name22" required placeholder="اللون" oninput="saveDataToStorage()">
-        </td>
-        <td>
-            <input type="text" class="prod-size" required placeholder="مثال: SS10 / mm18" oninput="saveDataToStorage()">
-        </td>
-        <td>
-            <input type="number" class="prod-qty" min="1" required placeholder="0" oninput="saveDataToStorage()">
-        </td>
-        <td class="delete-col">
-            <button type="button" class="btn btn-danger" onclick="deleteRow(this)">حذف</button>
-            <button type="button" class="btn btn-secondary" onclick="repeatRow(this)">تكرار</button>
-        </td>
-        
-    </tr>
-</tbody>
+          <thead>
+            <tr>
+              <th style="width: 60px">الرقم</th>
+              <th>اسم الشركة</th>
+              <th>الصنف</th>
+              <th>الون</th>
+              <th>المقاس</th>
+              <th>العدد</th>
+              <th class="delete-col">إجراء</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr>
+              <td class="row-number">1</td>
+              <td>
+                <select
+                  name="comp"
+                  class="comp-name"
+                  required
+                  onchange="
+                    handleCompanyChange(this);
+                    saveDataToStorage();
+                  "
+                >
+                  <option value="">اختر الشركة</option>
+                  <option value=" عصفور">عصفور</option>
+                  <option value=" جيلستون">جيلستون</option>
+                  <option value=" سوارفسكي">سوارفسكي</option>
+                  <option value=" شيكي">شيكي</option>
+                  <option value=" دارونز">دارونز</option>
+                  <option value=" دارونز ابو قاعدة">دارونز ابو قاعدة</option>
+                </select>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  class="prod-name"
+                  required
+                  placeholder="مثال:  6883"
+                  oninput="saveDataToStorage()"
+                />
+              </td>
+              <td class="color-container">
+                <input
+                  type="text"
+                  class="prod-name22"
+                  required
+                  placeholder="اللون"
+                  oninput="saveDataToStorage()"
+                />
+              </td>
+              <td>
+                <input
+                  type="text"
+                  class="prod-size"
+                  required
+                  placeholder="مثال: SS10 / mm18"
+                  oninput="saveDataToStorage()"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  class="prod-qty"
+                  min="1"
+                  required
+                  placeholder="0"
+                  oninput="saveDataToStorage()"
+                />
+              </td>
+              <td class="delete-col">
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  onclick="deleteRow(this)"
+                >
+                  حذف
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="repeatRow(this)"
+                >
+                  تكرار
+                </button>
+              </td>
+            </tr>
+          </tbody>
         </table>
 
-        <button type="button" class="btn btn-add" id="addRowBtn" onclick="addNewRow()">➕ إضافة صنف آخر</button>
-       
-        
-        <button type="submit" class="btn btn-submit" id="submitBtn">✔️ إنشاء واعتماد الطلبية</button>
-        <button type="button" class="btn btn-edit" id="editBtn" style="display:none; width: 100%; margin-top: 20px;" onclick="enableEditing()">✏️ تعديل الطلبية الحالية</button>
-    </form>
+        <button
+          type="button"
+          class="btn btn-add"
+          id="addRowBtn"
+          onclick="addNewRow()"
+        >
+          ➕ إضافة صنف آخر
+        </button>
 
-    <div class="actions-section" id="actionButtons">
-        <button class="btn-action bg-pdf" onclick="shareAsPDF()">📄 مشاركة وتحميل ملف PDF  (A4)</button>
+        <button type="submit" class="btn btn-submit" id="submitBtn">
+          ✔️ إنشاء واعتماد الطلبية
+        </button>
+        <button
+          type="button"
+          class="btn btn-edit"
+          id="editBtn"
+          style="display: none; width: 100%; margin-top: 20px"
+          onclick="enableEditing()"
+        >
+          ✏️ تعديل الطلبية الحالية
+        </button>
+      </form>
+
+      <div class="actions-section" id="actionButtons">
+        <button class="btn-action bg-pdf" onclick="shareAsPDF()">
+          📄 مشاركة وتحميل ملف PDF (A4)
+        </button>
         <!-- <button class="btn-action bg-excel" onclick="exportToExcel()">📊 تصدير إلى Excel</button> -->
-        <button class="btn-action bg-new-invoice" onclick="createNewInvoice()">🔄 إنشاء فاتورة جديدة</button>
+        <button class="btn-action bg-new-invoice" onclick="createNewInvoice()">
+          🔄 إنشاء فاتورة جديدة
+        </button>
+      </div>
     </div>
-</div>
 
-<footer>
-    <p>&copy; نظام للفروع الداخلية, جميع الحقوق محفوظة yhyh1.0 </p>
-</footer>
+    <footer>
+      <p>&copy; نظام للفروع الداخلية, جميع الحقوق محفوظة yhyh1.0</p>
+    </footer>
 
     <script src="app.js"></script>
-    
-</body>
+  </body>
 </html>
